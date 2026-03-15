@@ -20,4 +20,7 @@ public class StudentDatabase {
         return studentList.size();
     }
 
+    public List<Student> getAllStudents() {
+        return studentList;
+    }
 }

@@ -1,10 +1,29 @@
 package dextro.command;
 
 import dextro.model.record.StudentDatabase;
+import dextro.model.Student;
 
-public class ListCommand implements Command{
+import java.util.List;
+
+public class ListCommand implements Command {
+
     @Override
     public CommandResult execute(StudentDatabase db) {
-        return null;
+        List<Student> students = db.getAllStudents();
+
+        if (students.isEmpty()) {
+            return new CommandResult("No students found.", false);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int index = 1;
+        for (Student student : students) {
+            sb.append(index++)
+                    .append(": ")
+                    .append(student.toString())
+                    .append("\n");
+        }
+
+        return new CommandResult(sb.toString().trim(), false);
     }
 }
