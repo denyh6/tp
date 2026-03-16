@@ -1,1 +1,5 @@
 James Gosling
+hi
+create
+create n/hi e/despacito@mail.com a/house c/CEG p/4324923
+list
