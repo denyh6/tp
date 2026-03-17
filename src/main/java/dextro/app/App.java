@@ -39,15 +39,9 @@ public class App {
                     break;
                 }
 
-            } catch (ParseException e) {
-                Ui.show("Error: " + e.getMessage());
-            } catch (CommandException e) {
+            } catch (ParseException | CommandException | IllegalArgumentException e) {
                 Ui.show("Error: " + e.getMessage());
             } catch (Exception e) {
-
-
-
-
                 Ui.show("Unexpected error: " + e.getMessage());
                 e.printStackTrace();
             }

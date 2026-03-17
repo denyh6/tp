@@ -9,6 +9,7 @@ import dextro.command.module.AddCommand;
 import dextro.command.module.RemoveCommand;
 import dextro.config.Config;
 import dextro.exception.ParseException;
+import dextro.model.Grade;
 
 public class Parser {
 
@@ -57,17 +58,48 @@ public class Parser {
 
     private Command parseAdd(String args) throws ParseException {
         String[] tokens = args.split("\\s+", 2);
+
         if (tokens.length < 2) {
-            throw new ParseException("Add requires an index and module/grade (e.g., 3 CS2113/B+)");
+            throw new ParseException(
+                    "Add requires: index + CODE/GRADE (e.g., 3 CS2113/A)"
+            );
         }
+
+        // Parse index
         int index;
         try {
             index = Integer.parseInt(tokens[0]);
         } catch (NumberFormatException e) {
             throw new ParseException("Invalid student index: " + tokens[0]);
         }
-        String moduleGrade = tokens[1]; // e.g., CS2113/B+
-        return new AddCommand(index, moduleGrade);
+
+        // Parse module/grade
+        String moduleGrade = tokens[1];
+
+        if (!moduleGrade.contains("/")) {
+            throw new ParseException(
+                    "Module format must be CODE/GRADE (e.g., CS2113/A)"
+            );
+        }
+
+        String[] parts = moduleGrade.split("/");
+
+        if (parts.length != 2 || parts[0].isBlank() || parts[1].isBlank()) {
+            throw new ParseException(
+                    "Module format must be CODE/GRADE (e.g., CS2113/A)"
+            );
+        }
+
+        String moduleCode = parts[0];
+        Grade grade;
+
+        try {
+            grade = Grade.fromString(parts[1]);
+        } catch (IllegalArgumentException e) {
+            throw new ParseException("Invalid grade: " + parts[1]);
+        }
+
+        return new AddCommand(index, moduleCode, grade);
     }
 
     private Command parseRemove(String args) throws ParseException {
