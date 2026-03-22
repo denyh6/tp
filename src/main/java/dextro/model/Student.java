@@ -88,7 +88,9 @@ public class Student {
         }
 
         public Builder name(String name) {
-        if (name != null && !name.isBlank()) this.name = name;
+        if (name != null && !name.isBlank()) {
+            this.name = name;  
+        }
         return this;
     }
 
