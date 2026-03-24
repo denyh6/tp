@@ -64,6 +64,39 @@ public class Student {
         return modules;
     }
 
+    public double calculateCap() {
+        if (modules.isEmpty()) {
+            return 0.0;
+        }
+        double totalPoints = 0.0;
+        int count = 0;
+        for (Module module : modules) {
+            totalPoints += module.getGrade().getCap();
+            count++;
+        }
+        return totalPoints / count;
+    }
+
+    public int getTotalMCs() {
+        // Assuming each module is 4 MCs as per the example
+        return modules.size() * 4;
+    }
+
+    public String getProgressStatus() {
+        int totalMCs = getTotalMCs();
+        if (totalMCs >= 160) {
+            return "Completed";
+        } else if (totalMCs >= 120) {
+            return "Good Progress";
+        } else if (totalMCs >= 80) {
+            return "Satisfactory";
+        } else if (totalMCs >= 40) {
+            return "On Track";
+        } else {
+            return "Just Started";
+        }
+    }
+
     // Builder class
     public static class Builder {
         private final String name; // compulsory

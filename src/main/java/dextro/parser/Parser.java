@@ -5,6 +5,7 @@ import dextro.command.CreateCommand;
 import dextro.command.DeleteCommand;
 import dextro.command.ExitCommand;
 import dextro.command.ListCommand;
+import dextro.command.StatusCommand;
 import dextro.command.module.AddCommand;
 import dextro.command.module.RemoveCommand;
 import dextro.config.Config;
@@ -28,6 +29,7 @@ public class Parser {
         case Config.CMD_ADD -> parseAdd(arguments);
         case Config.CMD_REMOVE -> parseRemove(arguments);
         case Config.CMD_LIST -> new ListCommand();
+        case Config.CMD_STATUS -> parseStatus(arguments);
         case Config.CMD_EXIT -> new ExitCommand();
         default -> throw new ParseException("Unknown command: " + commandWord);
         };
@@ -115,5 +117,14 @@ public class Parser {
         }
         String moduleCode = tokens[1]; // e.g., CS2113
         return new RemoveCommand(index, moduleCode);
+    }
+
+    private Command parseStatus(String args) throws ParseException {
+        try {
+            int index = Integer.parseInt(args);
+            return new StatusCommand(index);
+        } catch (NumberFormatException e) {
+            throw new ParseException("Invalid index for status: " + args);
+        }
     }
 }
