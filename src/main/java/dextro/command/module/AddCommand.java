@@ -41,7 +41,7 @@ public class AddCommand implements Command {
     }
 
     @Override
-    public CommandResult undo(StudentDatabase db) throws CommandException {
+    public CommandResult undo(StudentDatabase db, Storage storage) throws CommandException {
         if (!wasExecuted) {
             throw new CommandException("Cannot undo: add command was not executed");
         }

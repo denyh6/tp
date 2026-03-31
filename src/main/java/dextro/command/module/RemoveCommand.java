@@ -50,7 +50,7 @@ public class RemoveCommand implements Command {
     }
 
     @Override
-    public CommandResult undo(StudentDatabase db) throws CommandException {
+    public CommandResult undo(StudentDatabase db, Storage storage) throws CommandException {
         if (removedModule == null) {
             throw new CommandException("Cannot undo: remove command was not executed or module was not found");
         }

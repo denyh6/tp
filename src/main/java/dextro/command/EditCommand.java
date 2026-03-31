@@ -69,7 +69,7 @@ public class EditCommand implements Command {
     }
 
     @Override
-    public CommandResult undo(StudentDatabase db) throws CommandException {
+    public CommandResult undo(StudentDatabase db, Storage storage) throws CommandException {
         if (previousStudent == null) {
             throw new CommandException("Cannot undo: edit command was not executed");
         }

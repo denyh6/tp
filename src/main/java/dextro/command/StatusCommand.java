@@ -36,7 +36,7 @@ public class StatusCommand implements Command {
     }
 
     @Override
-    public CommandResult undo(StudentDatabase db) throws CommandException {
+    public CommandResult undo(StudentDatabase db, Storage storage) throws CommandException {
         throw new CommandException("Cannot undo status command");
     }
 
