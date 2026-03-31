@@ -1,5 +1,6 @@
 package dextro.command.module;
 
+import dextro.app.Storage;
 import dextro.command.Command;
 import dextro.command.CommandResult;
 import dextro.model.Grade;
@@ -20,7 +21,7 @@ public class AddCommand implements Command {
     }
 
     @Override
-    public CommandResult execute(StudentDatabase db) {
+    public CommandResult execute(StudentDatabase db, Storage storage) {
         if (index < 1 || index > db.getStudentCount()) {
             return new CommandResult("Invalid student index");
         }
@@ -29,6 +30,7 @@ public class AddCommand implements Command {
 
         Module module = new Module(moduleCode, grade);
         student.addModule(module);
+        storage.saveStudentList(db);
 
         return new CommandResult(
                 "Added module " + moduleCode + " (" + grade + ") to " + student.getName()

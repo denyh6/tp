@@ -13,11 +13,13 @@ public class App {
     private final Parser parser;
     private final StudentDatabase db;
     private final Ui ui;
+    private final Storage storage;
 
-    public App(Ui ui, Parser parser, StudentDatabase db) {
+    public App(Ui ui, Parser parser, StudentDatabase db, Storage storage) {
         this.ui = ui;
         this.parser = parser;
         this.db = db;
+        this.storage = storage;
     }
 
     public void run() {
@@ -32,7 +34,7 @@ public class App {
             }
             try {
                 Command command = parser.parse(input);
-                CommandResult result = command.execute(db);
+                CommandResult result = command.execute(db, storage);
                 Ui.show(result.getMessage());
 
                 if (result.shouldExit()) {

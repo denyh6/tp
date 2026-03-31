@@ -1,5 +1,6 @@
 package dextro.command.module;
 
+import dextro.app.Storage;
 import dextro.command.Command;
 import dextro.command.CommandResult;
 import dextro.model.Student;
@@ -16,7 +17,7 @@ public class RemoveCommand implements Command {
     }
 
     @Override
-    public CommandResult execute(StudentDatabase db) {
+    public CommandResult execute(StudentDatabase db, Storage storage) {
 
         if (index < 1 || index > db.getStudentCount()) {
             return new CommandResult("Invalid student index");
@@ -28,6 +29,7 @@ public class RemoveCommand implements Command {
         if (removed) {
             return new CommandResult("Removed module " + moduleCode + " from " + student.getName());
         }
+        storage.saveStudentList(db);
 
         return new CommandResult(
                 "Module " + moduleCode + " not found for " + student.getName()

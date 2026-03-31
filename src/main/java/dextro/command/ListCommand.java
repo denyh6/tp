@@ -1,5 +1,6 @@
 package dextro.command;
 
+import dextro.app.Storage;
 import dextro.model.record.StudentDatabase;
 import dextro.model.Student;
 
@@ -8,7 +9,7 @@ import java.util.List;
 public class ListCommand implements Command {
 
     @Override
-    public CommandResult execute(StudentDatabase db) {
+    public CommandResult execute(StudentDatabase db, Storage storage) {
         List<Student> students = db.getAllStudents();
 
         if (students.isEmpty()) {

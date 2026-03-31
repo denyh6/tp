@@ -3,6 +3,7 @@ package dextro.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import dextro.app.Storage;
 import dextro.exception.CommandException;
 import dextro.model.record.StudentDatabase;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,21 +12,25 @@ import org.junit.jupiter.api.Test;
 class DeleteCommandTest {
 
     private StudentDatabase db;
+    private Storage storage;
 
     @BeforeEach
     void setUp() {
         db = new StudentDatabase();
+        storage = new Storage("./data/DextroStudentList.txt");
 
         // Use CreateCommand (builder pattern internally)
-        new CreateCommand("Alice", "123", "a@mail.com", "Addr1", "CS").execute(db);
-        new CreateCommand("Bob", "456", "b@mail.com", "Addr2", "IT").execute(db);
+        new CreateCommand("Alice", "123", "a@mail.com", "Addr1", "CS")
+                .execute(db, storage);
+        new CreateCommand("Bob", "456", "b@mail.com", "Addr2", "IT")
+                .execute(db, storage);
     }
 
     @Test
     void execute_validIndex_deletesStudentSuccessfully() {
         DeleteCommand command = new DeleteCommand(1);
 
-        CommandResult result = command.execute(db);
+        CommandResult result = command.execute(db, storage);
 
         // Check message
         assertEquals(
@@ -44,7 +49,7 @@ class DeleteCommandTest {
 
         CommandException exception = assertThrows(
                 CommandException.class,
-                () -> command.execute(db)
+                () -> command.execute(db, storage)
         );
 
         assertEquals(

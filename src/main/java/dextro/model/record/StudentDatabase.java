@@ -6,7 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentDatabase {
-    private final List<Student> studentList = new ArrayList<>();
+    private final List<Student> studentList;
+
+    public StudentDatabase() {
+        studentList = new ArrayList<>();
+    }
+
+    public StudentDatabase(List<Student> studentList) {
+        this.studentList = studentList;
+    }
 
     public void addStudent(Student student) {
         studentList.add(student);

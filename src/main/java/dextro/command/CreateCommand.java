@@ -1,5 +1,6 @@
 package dextro.command;
 
+import dextro.app.Storage;
 import dextro.model.Student;
 import dextro.model.record.StudentDatabase;
 
@@ -20,7 +21,7 @@ public class CreateCommand implements Command {
     }
 
     @Override
-    public CommandResult execute(StudentDatabase db) {
+    public CommandResult execute(StudentDatabase db, Storage storage) {
         Student student = new Student.Builder(name)
                 .phone(phone)
                 .email(email)
@@ -29,6 +30,7 @@ public class CreateCommand implements Command {
                 .build();
 
         db.addStudent(student);
+        storage.saveStudentList(db);
 
         String message = String.format("Student created: %s", student.getName());
         return new CommandResult(message);
