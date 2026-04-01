@@ -1,5 +1,6 @@
 package dextro.command;
 
+import dextro.app.Storage;
 import dextro.exception.CommandException;
 import dextro.model.Module;
 import dextro.model.Student;
@@ -91,6 +92,16 @@ public class SearchCommand implements Command {
     @Override
     public CommandResult undo(StudentDatabase db) throws CommandException {
         throw new CommandException("Cannot undo search command");
+    }
+
+    @Override
+    public CommandResult execute(StudentDatabase db, Storage storage) throws CommandException {
+        return null;
+    }
+
+    @Override
+    public CommandResult undo(StudentDatabase db, Storage storage) throws CommandException {
+        return null;
     }
 
     @Override
