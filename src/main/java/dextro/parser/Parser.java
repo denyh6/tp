@@ -4,13 +4,14 @@ import dextro.command.Command;
 import dextro.command.CommandHistory;
 import dextro.command.CreateCommand;
 import dextro.command.DeleteCommand;
+import dextro.command.EditCommand;
 import dextro.command.ExitCommand;
+import dextro.command.SearchCommand;
 import dextro.command.ListCommand;
 import dextro.command.StatusCommand;
 import dextro.command.UndoCommand;
 import dextro.command.module.AddCommand;
 import dextro.command.module.RemoveCommand;
-import dextro.command.EditCommand;
 import dextro.config.Config;
 import dextro.exception.ParseException;
 import dextro.model.Grade;
@@ -39,6 +40,7 @@ public class Parser {
         case Config.CMD_LIST -> new ListCommand();
         case Config.CMD_STATUS -> parseStatus(arguments);
         case Config.CMD_UNDO -> parseUndo();
+        case Config.CMD_SEARCH -> parseSearch(arguments);
         case Config.CMD_EXIT -> new ExitCommand();
         case Config.CMD_EDIT -> parseEdit(arguments);
         default -> throw new ParseException("Unknown command: " + commandWord);
@@ -229,6 +231,35 @@ public class Parser {
             return new StatusCommand(index);
         } catch (NumberFormatException e) {
             throw new ParseException("Invalid index for status: " + args);
+        }
+    }
+
+    private Command parseSearch(String args) throws ParseException {
+        if (args == null || args.isBlank()) {
+            throw new ParseException("Search query cannot be empty.");
+        }
+
+        ArgumentTokenizer tokenizer = new ArgumentTokenizer(args, "c/", "m/");
+        String course = tokenizer.getValue("c/");
+        String module = tokenizer.getValue("m/");
+
+        if (course != null && module != null) {
+            throw new ParseException("Cannot search by both course and module at the same time.");
+        }
+
+        if (course != null) {
+            if (course.isBlank()) {
+                throw new ParseException("Course search query cannot be empty.");
+            }
+            return new SearchCommand(null, course, null);
+        } else if (module != null) {
+            if (module.isBlank()) {
+                throw new ParseException("Module search query cannot be empty.");
+            }
+            return new SearchCommand(null, null, module);
+        } else {
+            // If neither prefix is found, treat the entire argument as a general keyword search
+            return new SearchCommand(args.trim(), null, null);
         }
     }
 
