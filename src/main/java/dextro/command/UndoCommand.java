@@ -12,6 +12,16 @@ public class UndoCommand implements Command {
     }
 
     @Override
+    public CommandResult execute(StudentDatabase db) throws CommandException {
+        return null;
+    }
+
+    @Override
+    public CommandResult undo(StudentDatabase db) throws CommandException {
+        return null;
+    }
+
+    @Override
     public CommandResult execute(StudentDatabase db, Storage storage) throws CommandException {
         if (history.isEmpty()) {
             return new CommandResult("Warning: No command to undo");
