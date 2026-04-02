@@ -1,0 +1,54 @@
+@startuml
+skinparam maxMessageSize 150
+
+participant ":Caller" as Caller
+participant "cmd:FindCommand" as FindCommand
+participant "db:StudentDatabase" as StudentDatabase
+participant "students:List<Student>" as List
+
+Caller -> FindCommand : execute(db, storage)
+activate FindCommand
+
+FindCommand -> StudentDatabase : getAllStudents()
+activate StudentDatabase
+StudentDatabase --> FindCommand : students
+deactivate StudentDatabase
+
+alt substring.equals(null)
+    FindCommand --> Caller : throws CommandException("String to find is null")
+end
+
+loop for i = 0 to students.size() - 1
+    FindCommand -> List : get(i)
+    activate List
+    List --> FindCommand : student
+    deactivate List
+
+    FindCommand -> FindCommand : matchesSubstring(student, substring)
+    activate FindCommand
+    FindCommand --> FindCommand : isMatch
+    deactivate FindCommand
+
+    opt isMatch == true
+        FindCommand -> FindCommand : sb.append(...)
+        FindCommand -> FindCommand : found = true
+    end
+end
+
+alt !found
+    create "result:CommandResult" as CommandResult1
+    FindCommand -> CommandResult1 : new("No matching students found.")
+    activate CommandResult1
+    CommandResult1 --> FindCommand : result
+    deactivate CommandResult1
+else found == true
+    create "result:CommandResult" as CommandResult2
+    FindCommand -> CommandResult2 : new(sb.toString().trim(), false)
+    activate CommandResult2
+    CommandResult2 --> FindCommand : result
+    deactivate CommandResult2
+end
+
+FindCommand --> Caller : result
+deactivate FindCommand
+@enduml

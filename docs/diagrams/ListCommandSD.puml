@@ -1,0 +1,36 @@
+@startuml
+skinparam maxMessageSize 150
+
+participant Caller
+participant "cmd:ListCommand" as ListCommand
+participant "db:StudentDatabase" as StudentDatabase
+
+Caller -> ListCommand : execute(db, storage)
+activate ListCommand
+
+ListCommand -> StudentDatabase : getAllStudents()
+activate StudentDatabase
+StudentDatabase --> ListCommand : students
+deactivate StudentDatabase
+
+alt students.isEmpty()
+    create "result:CommandResult" as CommandResult1
+    ListCommand -> CommandResult1 : new("No students found.", false)
+    activate CommandResult1
+    CommandResult1 --> ListCommand : result
+    deactivate CommandResult1
+else
+    loop for each student in students
+        ListCommand -> ListCommand : sb.append(...)
+    end
+
+    create "result:CommandResult" as CommandResult2
+    ListCommand -> CommandResult2 : new(sb.toString().trim(), false)
+    activate CommandResult2
+    CommandResult2 --> ListCommand : result
+    deactivate CommandResult2
+end
+
+ListCommand --> Caller : result
+deactivate ListCommand
+@enduml

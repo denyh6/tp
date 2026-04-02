@@ -1,0 +1,29 @@
+@startuml
+actor User
+participant ":App" as App
+participant ":Parser" as Parser
+participant ":AddCommand" as Add
+participant ":StudentDatabase" as DB
+participant ":Storage" as Storage
+participant ":Student" as Student
+
+title AddCommand - Sequence Diagram
+
+User -> App : "add 1 CS2113/A"
+App -> Parser : parse(input)
+Parser -> Add : new AddCommand(1, "CS2113", A)
+Parser --> App : command
+App -> Add : execute(db, storage)
+Add -> DB : getStudentCount()
+alt index out of range (1..count)
+    Add --> App : CommandResult("Invalid student index")
+else valid
+    Add -> DB : getStudent(index-1)
+    DB --> Add : student
+    Add -> Student : addModule(module)
+    Add -> Storage : saveStudentList(db)
+    Add -> Add : wasExecuted = true
+    Add --> App : CommandResult("Added module...")
+end
+App -> User : show result
+@enduml

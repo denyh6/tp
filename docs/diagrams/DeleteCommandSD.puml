@@ -1,0 +1,41 @@
+@startuml
+skinparam maxMessageSize 150
+
+participant ":Caller" as Caller
+participant ":DeleteCommand" as DeleteCommand
+participant ":StudentDatabase" as StudentDatabase
+participant ":Storage" as Storage
+
+Caller -> DeleteCommand : execute(db, storage)
+activate DeleteCommand
+
+DeleteCommand -> StudentDatabase : removeStudent(index - 1)
+activate StudentDatabase
+
+alt success
+    StudentDatabase --> DeleteCommand : deletedStudent
+    deactivate StudentDatabase
+
+    DeleteCommand -> Storage : saveStudentList(db)
+    activate Storage
+    Storage --> DeleteCommand
+    deactivate Storage
+
+    create "result:CommandResult" as CommandResult1
+    DeleteCommand -> CommandResult1 : new("Successfully deleted student:\n" + deletedStudent)
+    activate CommandResult1
+    CommandResult1 --> DeleteCommand : result
+    deactivate CommandResult1
+
+    DeleteCommand --> Caller : result
+
+else IndexOutOfBoundsException
+    activate StudentDatabase
+    StudentDatabase --> DeleteCommand : throws IndexOutOfBoundsException
+    deactivate StudentDatabase
+
+    DeleteCommand --> Caller : throws CommandException("The student at index... does not exist.")
+end
+
+deactivate DeleteCommand
+@enduml

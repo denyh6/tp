@@ -1,0 +1,34 @@
+@startuml
+actor User
+participant ":App" as App
+participant ":Parser" as Parser
+participant ":SortCommand" as SortCmd
+participant ":StudentDatabase" as DB
+
+title - SortCommand - Sequence Diagram
+
+User -> App : "sort cap"
+App -> Parser : parse("sort cap")
+Parser -> SortCmd : new SortCommand("cap")
+Parser --> App : command
+App -> SortCmd : execute(db, storage)
+SortCmd -> DB : getAllStudents()
+DB --> SortCmd : students
+alt students.isEmpty()
+    SortCmd --> App : CommandResult("No students to sort.")
+else students not empty
+    SortCmd -> SortCmd : new ArrayList<>(students)
+    alt category == "name"
+        SortCmd -> SortCmd : sort by name (case-insensitive)
+    else category == "course"
+        SortCmd -> SortCmd : sort by course (case-insensitive)
+    else category == "cap"
+        SortCmd -> SortCmd : sort by calculateCap() descending
+    else category == "mcs"
+        SortCmd -> SortCmd : sort by getTotalMCs() descending
+    end
+    SortCmd -> SortCmd : build formatted string
+    SortCmd --> App : CommandResult(sorted list)
+end
+App -> User : show result
+@enduml

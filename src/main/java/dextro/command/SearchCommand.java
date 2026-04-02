@@ -10,19 +10,12 @@ import java.util.List;
 
 public class SearchCommand implements Command {
 
-    private final String keyword;
     private final String course;
     private final String moduleCode;
 
-    public SearchCommand(String keyword, String course, String moduleCode) {
-        this.keyword = keyword;
+    public SearchCommand(String course, String moduleCode) {
         this.course = course;
         this.moduleCode = moduleCode;
-    }
-
-    @Override
-    public CommandResult execute(StudentDatabase db, Storage storage) throws CommandException {
-        return null;
     }
 
     @Override
@@ -30,11 +23,6 @@ public class SearchCommand implements Command {
         List<Student> students = db.getAllStudents();
         StringBuilder sb = new StringBuilder();
         boolean found = false;
-
-        // If it's a general keyword search, add the header to match the requirements
-        if (keyword != null) {
-            sb.append("Here are the matching students in your list:\n");
-        }
 
         for (int i = 0; i < students.size(); i++) {
             Student student = students.get(i);
@@ -57,12 +45,6 @@ public class SearchCommand implements Command {
                         break; // Move to the next student once a module matches
                     }
                 }
-            } else if (keyword != null) {
-                // General keyword search across ALL fields
-                if (matchesKeyword(student, keyword)) {
-                    sb.append(originalIndex).append(". ").append(student.toString()).append("\n");
-                    found = true;
-                }
             }
         }
 
@@ -74,38 +56,14 @@ public class SearchCommand implements Command {
     }
 
     /**
-     * Checks if the keyword exists in any of the student's fields or their modules.
+     * @param db
+     * @param storage
+     * @return
+     * @throws CommandException
      */
-    private boolean matchesKeyword(Student student, String keyword) {
-        String kw = keyword.toLowerCase();
-
-        if (student.getName().toLowerCase().contains(kw)) {
-            return true;
-        }
-        if (student.getPhone().toLowerCase().contains(kw)) {
-            return true;
-        }
-        if (student.getEmail().toLowerCase().contains(kw)) {
-            return true;
-        }
-        if (student.getAddress().toLowerCase().contains(kw)) {
-            return true;
-        }
-        if (student.getCourse().toLowerCase().contains(kw)) {
-            return true;
-        }
-
-        // Also check inside their modules for the module code or grade
-        for (Module m : student.getModules()) {
-            if (m.getCode().toLowerCase().contains(kw)) {
-                return true;
-            }
-            if (m.getGrade().toString().toLowerCase().contains(kw)) {
-                return true;
-            }
-        }
-
-        return false;
+    @Override
+    public CommandResult execute(StudentDatabase db, Storage storage) throws CommandException {
+        return null;
     }
 
     @Override
@@ -113,6 +71,12 @@ public class SearchCommand implements Command {
         throw new CommandException("Cannot undo search command");
     }
 
+    /**
+     * @param db
+     * @param storage
+     * @return
+     * @throws CommandException
+     */
     @Override
     public CommandResult undo(StudentDatabase db, Storage storage) throws CommandException {
         return null;

@@ -1,0 +1,89 @@
+@startuml
+skinparam maxMessageSize 150
+
+participant Caller
+participant "cmd:EditCommand" as EditCommand
+participant "db:StudentDatabase" as StudentDatabase
+participant ":Storage" as Storage
+participant ":Student" as Student
+participant "updatedStudent:Student" as UpdatedStudent
+
+title EditCommand - Sequence Diagram
+
+Caller -> EditCommand : execute(db, storage)
+activate EditCommand
+
+EditCommand -> StudentDatabase : getStudentCount()
+activate StudentDatabase
+StudentDatabase --> EditCommand : studentCount
+deactivate StudentDatabase
+
+alt index > studentCount || index < 0
+    EditCommand --> Caller : throws CommandException
+end
+
+EditCommand -> StudentDatabase : getStudent(index)
+activate StudentDatabase
+StudentDatabase --> EditCommand : existing
+deactivate StudentDatabase
+
+opt moduleCode != null
+    EditCommand -> Student : getModules()
+    activate Student
+    Student --> EditCommand : modules
+    deactivate Student
+
+    alt noneMatch(m.getCode() == moduleCode)
+        create "result:CommandResult" as CommandResult1
+        EditCommand -> CommandResult1 : new("Module not found...")
+        activate CommandResult1
+        CommandResult1 --> EditCommand : result
+        deactivate CommandResult1
+        EditCommand --> Caller : result
+    end
+end
+
+create UpdatedStudent
+EditCommand -> UpdatedStudent : new Student.Builder(existing)\n.build()
+activate UpdatedStudent
+UpdatedStudent --> EditCommand : updatedStudent
+deactivate UpdatedStudent
+
+EditCommand -> Student : getModules()
+activate Student
+Student --> EditCommand : modules
+deactivate Student
+
+loop for each Module m in existing.getModules()
+    alt moduleCode != null && m.getCode() == moduleCode
+        EditCommand -> UpdatedStudent : addModule(new Module(m.getCode(), grade))
+        activate UpdatedStudent
+        UpdatedStudent --> EditCommand
+        deactivate UpdatedStudent
+    else
+        EditCommand -> UpdatedStudent : addModule(m)
+        activate UpdatedStudent
+        UpdatedStudent --> EditCommand
+        deactivate UpdatedStudent
+    end
+end
+
+EditCommand -> StudentDatabase : updateStudent(index, updatedStudent)
+activate StudentDatabase
+StudentDatabase --> EditCommand
+deactivate StudentDatabase
+
+EditCommand -> Storage : saveStudentList(db)
+activate Storage
+Storage --> EditCommand
+deactivate Storage
+
+create "result:CommandResult" as CommandResult2
+EditCommand -> CommandResult2 : new("Student updated successfully.")
+activate CommandResult2
+CommandResult2 --> EditCommand : result
+deactivate CommandResult2
+
+EditCommand --> Caller : result
+deactivate EditCommand
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+actor User
+participant ":App" as App
+participant ":Parser" as Parser
+participant ":StatusCommand" as Status
+participant ":StudentDatabase" as DB
+participant ":Student" as Student
+
+title StatusCommand - Sequence Diagram
+
+User -> App : "status 1"
+App -> Parser : parse(input)
+Parser -> Status : new StatusCommand(1)
+Parser --> App : command
+App -> Status : execute(db, storage)
+Status -> DB : getStudent(0)
+DB --> Status : student
+Status -> Student : calculateCap()
+Student --> Status : cap
+Status -> Student : getTotalMCs()
+Student --> Status : totalMCs
+Status -> Student : getProgressStatus()
+Student --> Status : status
+Status --> App : CommandResult(formatted status)
+App -> User : show status
+@enduml

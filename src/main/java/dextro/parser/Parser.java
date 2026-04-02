@@ -8,6 +8,7 @@ import dextro.command.EditCommand;
 import dextro.command.ExitCommand;
 import dextro.command.FindCommand;
 import dextro.command.SearchCommand;
+//import dextro.command.SortCommand;
 import dextro.command.ListCommand;
 import dextro.command.StatusCommand;
 import dextro.command.UndoCommand;
@@ -42,6 +43,7 @@ public class Parser {
         case Config.CMD_STATUS -> parseStatus(arguments);
         case Config.CMD_UNDO -> parseUndo();
         case Config.CMD_SEARCH -> parseSearch(arguments);
+        //case Config.CMD_SORT -> parseSort(arguments);
         case Config.CMD_FIND -> parseFind(arguments);
         case Config.CMD_EXIT -> new ExitCommand();
         case Config.CMD_EDIT -> parseEdit(arguments);
@@ -253,17 +255,31 @@ public class Parser {
             if (course.isBlank()) {
                 throw new ParseException("Course search query cannot be empty.");
             }
-            return new SearchCommand(null, course, null);
+            return new SearchCommand(course, null);
         } else if (module != null) {
             if (module.isBlank()) {
                 throw new ParseException("Module search query cannot be empty.");
             }
-            return new SearchCommand(null, null, module);
+            return new SearchCommand(null, module);
         } else {
-            // If neither prefix is found, treat the entire argument as a general keyword search
-            return new SearchCommand(args.trim(), null, null);
+            // Throw the requested error if no valid prefixes are used
+            throw new ParseException("I'm sorry, I think you meant to use the find function? The search function only works if you input a valid prefix (e.g., c/CS or m/CS2113).");
         }
     }
+    /*
+    private Command parseSort(String args) throws ParseException {
+        if (args == null || args.isBlank()) {
+            throw new ParseException("Sort category cannot be empty. Usage: sort [name/course/cap/mcs]");
+        }
+
+        String category = args.trim().toLowerCase();
+        if (!category.equals("name") && !category.equals("course")
+                && !category.equals("cap") && !category.equals("mcs")) {
+            throw new ParseException("Invalid category. Available categories: name, course, cap, mcs");
+        }
+
+        return new SortCommand(category);
+    }*/
 
     private Command parseFind(String args) throws ParseException {
         if (args == null || args.isBlank()) {

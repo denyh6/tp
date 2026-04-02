@@ -1,0 +1,18 @@
+@startuml
+skinparam maxMessageSize 150
+
+participant ":Caller" as Caller
+participant ":ExitCommand" as ExitCommand
+
+Caller -> ExitCommand : execute(db, storage)
+activate ExitCommand
+
+create "result:CommandResult" as CommandResult
+ExitCommand -> CommandResult : new("Goodbye!", true)
+activate CommandResult
+CommandResult --> ExitCommand : result
+deactivate CommandResult
+
+ExitCommand --> Caller : result
+deactivate ExitCommand
+@enduml

@@ -8,6 +8,7 @@ public final class Config {
     public static final String CMD_STATUS = "status";
     public static final String CMD_UNDO = "undo";
     public static final String CMD_SEARCH = "search";
+    public static final String CMD_SORT = "sort";
     public static final String CMD_EXIT = "exit";
     public static final String CMD_FIND = "find";
 

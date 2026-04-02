@@ -1,0 +1,26 @@
+@startuml
+actor User
+participant ":App" as App
+participant ":Parser" as Parser
+participant "UndoCommand" as Undo
+participant ":CommandHistory" as History
+participant ":LastCommand" as LastCmd
+participant ":StudentDatabase" as DB
+participant ":Storage" as Storage
+
+title UndoCommand - Sequence Diagram
+
+User -> App : "undo"
+App -> Parser : parse("undo")
+Parser -> Undo : new UndoCommand(history)
+Parser --> App : command
+App -> Undo : execute(db, storage)
+Undo -> History : pop()
+History --> Undo : lastCommand
+Undo -> LastCmd : undo(db, storage)
+LastCmd -> DB : revert changes
+LastCmd -> Storage : saveStudentList(db)
+LastCmd --> Undo : CommandResult(undo message)
+Undo --> App : CommandResult(undo message)
+App -> User : show undo result
+@enduml

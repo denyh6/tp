@@ -1,0 +1,72 @@
+@startuml
+skinparam maxMessageSize 150
+
+participant Caller
+participant "cmd:SearchCommand" as SearchCommand
+participant "db:StudentDatabase" as StudentDatabase
+participant "students:List<Student>" as List
+participant "student:Student" as Student
+participant "m:Module" as Module
+
+title SearchCommand - Sequence Diagram
+
+Caller -> SearchCommand : execute(db)
+activate SearchCommand
+
+SearchCommand -> StudentDatabase : getAllStudents()
+activate StudentDatabase
+StudentDatabase --> SearchCommand : students
+deactivate StudentDatabase
+
+loop for i = 0 to students.size() - 1
+    SearchCommand -> List : get(i)
+    activate List
+    List --> SearchCommand : student
+    deactivate List
+
+    alt course != null
+        SearchCommand -> Student : getCourse()
+        activate Student
+        Student --> SearchCommand : courseString
+        deactivate Student
+        opt student.getCourse().contains(course)
+            SearchCommand -> SearchCommand : sb.append(...)
+        end
+
+    else moduleCode != null
+        SearchCommand -> Student : getModules()
+        activate Student
+        Student --> SearchCommand : modules
+        deactivate Student
+
+        loop for each Module m in student.getModules()
+            SearchCommand -> Module : getCode()
+            activate Module
+            Module --> SearchCommand : codeString
+            deactivate Module
+
+            opt codeString.contains(moduleCode)
+                SearchCommand -> SearchCommand : sb.append(...)
+                SearchCommand -> SearchCommand : break loop
+            end
+        end
+    end
+end
+
+alt !found
+    create "result:CommandResult" as CommandResult1
+    SearchCommand -> CommandResult1 : new("No matching students found.")
+    activate CommandResult1
+    CommandResult1 --> SearchCommand : result
+    deactivate CommandResult1
+else found
+    create "result:CommandResult" as CommandResult2
+    SearchCommand -> CommandResult2 : new(sb.toString().trim(), false)
+    activate CommandResult2
+    CommandResult2 --> SearchCommand : result
+    deactivate CommandResult2
+end
+
+SearchCommand --> Caller : result
+deactivate SearchCommand
+@enduml
