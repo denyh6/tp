@@ -29,22 +29,22 @@ public class SortCommand implements Command {
         List<Student> sortedList = new ArrayList<>(students);
 
         switch (category) {
-            case "name":
-                sortedList.sort(Comparator.comparing(Student::getName, String.CASE_INSENSITIVE_ORDER));
-                break;
-            case "course":
-                sortedList.sort(Comparator.comparing(Student::getCourse, String.CASE_INSENSITIVE_ORDER));
-                break;
-            case "cap":
-                // Sort numerically descending (highest CAP first)
-                sortedList.sort(Comparator.comparingDouble(Student::calculateCap).reversed());
-                break;
-            case "mcs":
-                // Sort numerically descending (highest MCs first)
-                sortedList.sort(Comparator.comparingInt(Student::getTotalMCs).reversed());
-                break;
-            default:
-                throw new CommandException("Invalid sort category. Available categories: name, course, cap, mcs");
+        case "name":
+            sortedList.sort(Comparator.comparing(Student::getName, String.CASE_INSENSITIVE_ORDER));
+            break;
+        case "course":
+            sortedList.sort(Comparator.comparing(Student::getCourse, String.CASE_INSENSITIVE_ORDER));
+            break;
+        case "cap":
+            // Sort numerically descending (highest CAP first)
+            sortedList.sort(Comparator.comparingDouble(Student::calculateCap).reversed());
+            break;
+        case "mcs":
+            // Sort numerically descending (highest MCs first)
+            sortedList.sort(Comparator.comparingInt(Student::getTotalMCs).reversed());
+            break;
+        default:
+            throw new CommandException("Invalid sort category. Available categories: name, course, cap, mcs");
         }
 
         StringBuilder sb = new StringBuilder();
@@ -69,12 +69,13 @@ public class SortCommand implements Command {
     }
 
     /**
-     * @param db
-     * @param storage
-     * @return
-     * @throws CommandException
+     * Executes the sort command using the provided database and storage.
+     *
+     * @param db      The student database.
+     * @param storage The storage component.
+     * @return The result of the command execution.
+     * @throws CommandException If an error occurs during execution.
      */
-
     @Override
     public CommandResult execute(StudentDatabase db, Storage storage) throws CommandException {
         // Sort doesn't need storage, so just pass it to your existing logic
