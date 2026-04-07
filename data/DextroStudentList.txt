@@ -1,2 +1,2 @@
-John/N.A./N.A./N.A./N.A./[CS2113/A]
-Jane/N.A./N.A./N.A./N.A./[CS2113/B]
+John/N.A./N.A./N.A./N.A./[CS2113/B/4, CS1010/A/4, CG2027/B/2, CG1111A/CS/4]
+Jane/N.A./N.A./N.A./N.A./[CS2113/CS/4]

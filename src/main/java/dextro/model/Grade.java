@@ -47,6 +47,14 @@ public enum Grade {
         return label;
     }
 
+    public boolean getCountsToGpa() {
+        return countsToGpa;
+    }
+
+    public boolean getCountsToCompletion() {
+        return countsToCompletion;
+    }
+
     public static Grade fromString(String input) {
         for (Grade g : Grade.values()) {
             if (g.label.equals(input)) {

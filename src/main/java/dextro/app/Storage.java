@@ -163,13 +163,26 @@ public class Storage {
                 continue;
             }
 
-            String[] parts = trimmed.split("/", 2);
-            if (parts.length != 2) {
+            String[] parts = trimmed.split("/");
+            if (parts.length < 2 || parts.length > 3) {
                 throw new IllegalArgumentException(
-                        "Invalid module entry (expected code/grade): " + trimmed);
+                        "Invalid module entry (expected code/grade or code/grade/credits): " + trimmed);
             }
-            Module moduleToAdd = new Module(parts[0].trim(), Grade.fromString(parts[1].trim()));
-            modules.add(moduleToAdd);
+
+            String code = parts[0].trim();
+            Grade grade = Grade.fromString(parts[1].trim());
+
+            if (parts.length == 3) {
+                try {
+                    int credits = Integer.parseInt(parts[2].trim());
+                    modules.add(new Module(code, grade, credits));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException(
+                            "Invalid credits value in module entry: " + trimmed);
+                }
+            } else {
+                modules.add(new Module(code, grade)); // defaults to 4
+            }
         }
 
         return modules;

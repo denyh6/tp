@@ -27,6 +27,10 @@ public class Module {
 
     @Override
     public String toString() {
-        return code + "/" + grade; // uses enum toString()
+        return code + "/" + grade + "/" + credits;
+    }
+
+    public int getCredits() {
+        return credits;
     }
 }

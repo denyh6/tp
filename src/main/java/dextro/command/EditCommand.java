@@ -16,10 +16,11 @@ public class EditCommand implements Command {
     private final String course;
     private final String moduleCode;
     private final Grade grade;
+    private final Integer credits;
     private Student previousStudent = null;
 
     public EditCommand(int index, String name, String phone, String email,
-                       String address, String course, String moduleCode, Grade grade) {
+                       String address, String course, String moduleCode, Grade grade, Integer credits) {
         this.index = index;
         this.name = name;
         this.phone = phone;
@@ -28,6 +29,7 @@ public class EditCommand implements Command {
         this.course = course;
         this.moduleCode = moduleCode;
         this.grade = grade;
+        this.credits = credits;
     }
 
     @Override
@@ -62,6 +64,9 @@ public class EditCommand implements Command {
         // copy modules, replacing grade for the matched module
         for (Module m : existing.getModules()) {
             if (moduleCode != null && m.getCode().equalsIgnoreCase(moduleCode)) {
+                if (credits != null) {
+                    updatedStudent.addModule(new Module(m.getCode(), grade, credits));
+                }
                 updatedStudent.addModule(new Module(m.getCode(), grade));
             } else {
                 updatedStudent.addModule(m);
