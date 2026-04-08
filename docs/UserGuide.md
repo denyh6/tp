@@ -34,12 +34,12 @@ Dextro will track students' progress and provide insights on how a student is fa
 
 **Syntax:**
 ```
-create n/NAME [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [c/COURSE]
+create n/<name> [p/<phone_number>] [e/<email_address>] [a/<address>] [c/<course>]
 ```
 
 **Example:**
 ```
-create n/John Doe p/87654321 e/john_doe@hmail.com a/Orchard Road block 20 #23-11 c/CS
+create n/John Doe p/87654321 e/john_doe@hmail.com a/Orchard Road block 20 #23-11 c/Computer Science
 ```
 Optional fields not provided or provided as blank will be stored blank. NAME is compulsory, while the rest are optional.
 Repeated fields not allowed. Order of fields does not matter.
@@ -49,6 +49,8 @@ Prefixes must be separated from text before with a space. Example:
 create n/John/ p/87654321
 ```
 The above command does not trigger an error for duplicate prefixes as the name is parsed as John/.
+
+Entries with duplicate details, i.e. same name or address (including exact duplicates) are allowed.
 
 ---
 
@@ -72,20 +74,28 @@ delete 1
 
 **Syntax:**
 ```
-edit <student_id> [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [c/COURSE] [m/MODULE/GRADE]
+edit <student_id> [n/<name>] [p/<phone_number>] [e/<email_address>] [a/<address>] [c/<course>] [m/<module_code>/<grade>[/<credits>]]
 ```
 
 **Example:**
 ```
-edit 1 n/Jane Doe p/98765432
+edit 1 n/Jane Doe p/98765432 m/CG2027/B/2
 ```
 Minimum of one field must be provided. Repeated fields not allowed. Order of fields does not matter.
+
+If the requested edit does not modify anything, the program will output a successful result anyways.
 
 Prefixes must be separated from text before with a space. Example:
 ```
 edit 2 n/John/ p/87654321
 ```
-The above command does not trigger an error for duplicate prefixes as the name is parsed as John/.
+The above command does not trigger an error for duplicate prefixes as the name is parsed as John/. 
+
+When editing a student's module entry:
+
+- If the module does not exist, the program will output an error message saying that the module is not found for the student.
+- Module credits are optional. Program will default to 4 credits if not provided.
+- Module code and grade are case-insensitive
 
 ---
 
@@ -112,7 +122,7 @@ Example output:
 
 **Syntax:**
 ```
-find <keyword>
+find <keywords>
 ```
 
 **Example:**
@@ -137,16 +147,16 @@ Here are the matching students in your list:
 
 **Syntax:**
 ```
-search [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [c/COURSE] [m/MODULE/GRADE]
+search [n/name] [p/<phone_number>] [e/<email>] [a/<address>] [c/<course>] [m/<module_code>/<grade>]
 ```
-Only one field must be provided. Repeated fields not allowed.
+Only one field can be provided. Repeated fields not allowed.
 
 Prefixes must be separated from text before with a space.
 
 ---
 
 ### `status`
-**Description:** Shows the status of a student (modules, grades, etc.).
+**Description:** Shows the GPA, degree completion progress and summary of a student.
 
 **Syntax:**
 ```
@@ -166,14 +176,15 @@ undo
 ---
 
 ### `sort`
-**Description:** Displays a sorted list of the existing databse entries
+**Description:** Displays a sorted list of the existing database entries
 
 **Syntax:**
 ```
-sort <keyword>
+sort <criterion>
 ```
-Keywords: 
-```name, course, cap, mcs```
+Criteria: `name, course, cap, mcs`
+
+Displays a temporary list. Does not affect the order of the database entries. 
 
 ---
 
@@ -195,28 +206,34 @@ exit
 
 **Syntax:**
 ```
-add <student_id> m/<module_name>/<grade>
+add <student_id> m/<module_code>/<grade>[/credits]
 ```
 
 **Example:**
 ```
 add 1 m/CS101/A
+add 1 m/MA1511/B+/2
 ```
+Adding duplicate modules under the same student is allowed, to accommodate module retakes.
+
 
 ---
 
 ### `remove`
-**Description:** Removes a module from a student.
+**Description:** Removes all modules matching the input from a student.
 
 **Syntax:**
 ```
-remove <student_id> m/<module_name>
+remove <student_id> m/<module_code>
 ```
 
 **Example:**
 ```
-remove 1 m/CS101
+remove 1 m/Cs101
+remove 1 m/cG1111a
 ```
+
+module code is not case sensitive.
 
 ---
 

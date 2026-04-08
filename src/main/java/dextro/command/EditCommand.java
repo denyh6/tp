@@ -16,10 +16,11 @@ public class EditCommand implements Command {
     private final String course;
     private final String moduleCode;
     private final Grade grade;
+    private final Integer credits;
     private Student previousStudent = null;
 
     public EditCommand(int index, String name, String phone, String email,
-                       String address, String course, String moduleCode, Grade grade) {
+                       String address, String course, String moduleCode, Grade grade, Integer credits) {
         this.index = index;
         this.name = name;
         this.phone = phone;
@@ -28,6 +29,7 @@ public class EditCommand implements Command {
         this.course = course;
         this.moduleCode = moduleCode;
         this.grade = grade;
+        this.credits = credits;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class EditCommand implements Command {
     }
 
     @Override
-    public CommandResult execute(StudentDatabase db, Storage storage) throws CommandException{
+    public CommandResult execute(StudentDatabase db, Storage storage) throws CommandException {
         int studentCount = db.getStudentCount();
         if (index > studentCount || index < 0) {
             throw new CommandException("Index should be within range.");
@@ -59,10 +61,16 @@ public class EditCommand implements Command {
             .course(course)
             .build();
 
+        boolean editedModule = false;
         // copy modules, replacing grade for the matched module
         for (Module m : existing.getModules()) {
-            if (moduleCode != null && m.getCode().equalsIgnoreCase(moduleCode)) {
-                updatedStudent.addModule(new Module(m.getCode(), grade));
+            if (m.getCode().equalsIgnoreCase(moduleCode)) {
+                if (credits != null) {
+                    updatedStudent.addModule(new Module(m.getCode(), grade, credits));
+                } else {
+                    updatedStudent.addModule(new Module(m.getCode(), grade));
+                }
+                editedModule = true;
             } else {
                 updatedStudent.addModule(m);
             }
@@ -70,6 +78,9 @@ public class EditCommand implements Command {
 
         db.updateStudent(index, updatedStudent);
         storage.saveStudentList(db);
+        if (name == null && phone == null && email == null && address == null && course == null && !editedModule) {
+            return new CommandResult("No changes made.");
+        }
         return new CommandResult("Student updated successfully.");
     }
 

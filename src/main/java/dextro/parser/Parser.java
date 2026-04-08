@@ -103,6 +103,23 @@ public class Parser {
 
         return address;
     }
+
+    private String validateModuleCode(String moduleCode) throws ParseException {
+        if (!moduleCode.matches("^[A-Z]{2,4}\\d{4}[A-Z0-9]{0,5}$")) {
+            throw new ParseException("Invalid module code: " + moduleCode);
+        } else {
+            return moduleCode;
+        }
+    }
+
+    private Grade validateGrade(String grade) throws ParseException {
+        try {
+            return Grade.fromString(grade.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ParseException("Invalid grade: " + grade);
+        }
+    }
+
     private Command parseCreate(String args) throws ParseException {
         ArgumentTokenizer tokenizer = new ArgumentTokenizer(args, "n/", "p/", "e/", "a/", "c/");
 
@@ -129,12 +146,9 @@ public class Parser {
         String[] tokens = args.split("\\s+", 2);
 
         if (tokens.length < 2) {
-            throw new ParseException(
-                    "Add requires: index + CODE/GRADE (e.g., 3 CS2113/A)"
-            );
+            throw new ParseException("Add requires: index + CODE/GRADE[/CREDITS] (e.g., 3 CS2113/A or 3 CS2113/A/2)");
         }
 
-        // Parse index
         int index;
         try {
             index = Integer.parseInt(tokens[0]);
@@ -142,33 +156,31 @@ public class Parser {
             throw new ParseException("Invalid student index: " + tokens[0]);
         }
 
-        // Parse module/grade
-        String moduleGrade = tokens[1];
+        String[] parts = tokens[1].split("/");
 
-        if (!moduleGrade.contains("/")) {
-            throw new ParseException(
-                    "Module format must be CODE/GRADE (e.g., CS2113/A)"
-            );
+        if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
+            throw new ParseException("Module format must be CODE/GRADE[/CREDITS] (e.g., CS2113/A or CS2113/A/2)");
         }
 
-        String[] parts = moduleGrade.split("/");
+        String moduleCode = validateModuleCode(parts[0].toUpperCase());
 
-        if (parts.length != 2 || parts[0].isBlank() || parts[1].isBlank()) {
-            throw new ParseException(
-                    "Module format must be CODE/GRADE (e.g., CS2113/A)"
-            );
+        Grade grade = validateGrade(parts[1].toUpperCase());
+
+        if (parts.length == 2) {
+            return new AddCommand(index, moduleCode, grade, null);
         }
 
-        String moduleCode = parts[0];
-        Grade grade;
-
+        int credits;
         try {
-            grade = Grade.fromString(parts[1]);
-        } catch (IllegalArgumentException e) {
-            throw new ParseException("Invalid grade: " + parts[1]);
+            credits = Integer.parseInt(parts[2]);
+            if (credits <= 0) {
+                throw new ParseException("Credits must be a positive integer");
+            }
+        } catch (NumberFormatException e) {
+            throw new ParseException("Invalid credits value: " + parts[2]);
         }
 
-        return new AddCommand(index, moduleCode, grade);
+        return new AddCommand(index, moduleCode, grade, credits);
     }
 
     private Command parseRemove(String args) throws ParseException {
@@ -213,20 +225,29 @@ public class Parser {
         // parse moduleCode and grade out of "CODE/GRADE"
         String moduleCode = null;
         Grade grade = null;
+        Integer credits = null;
         if (moduleValue != null) {
-            String[] parts = moduleValue.split("/", 2);
-            if (parts.length != 2 || parts[0].isBlank() || parts[1].isBlank()) {
-                throw new ParseException("Module format must be CODE/GRADE (e.g., m/CS2113/A)");
+            String[] parts = moduleValue.split("/");
+            if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
+                throw new ParseException("Module format must be CODE/GRADE[/CREDITS] " +
+                        "(e.g., m/CS2113/A or m/CS2113/A/2)");
             }
-            moduleCode = parts[0].trim();
-            try {
-                grade = Grade.fromString(parts[1].trim());
-            } catch (IllegalArgumentException e) {
-                throw new ParseException("Invalid grade: " + parts[1]);
+            moduleCode = validateModuleCode(parts[0].trim().toUpperCase());
+            grade = validateGrade(parts[1].trim().toUpperCase());
+
+            if (parts.length >= 3) {
+                try {
+                    credits = Integer.parseInt(parts[2].trim());
+                    if (credits <= 0) {
+                        throw new ParseException("Credits must be a positive integer");
+                    }
+                } catch (NumberFormatException e) {
+                    throw new ParseException("Invalid credits value: " + parts[2]);
+                }
             }
         }
 
-        return new EditCommand(index - 1, name, phone, email, address, course, moduleCode, grade);
+        return new EditCommand(index - 1, name, phone, email, address, course, moduleCode, grade, credits);
     }
 
     private Command parseStatus(String args) throws ParseException {
