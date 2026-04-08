@@ -43,9 +43,9 @@ public class RemoveCommand implements Command {
 
         boolean removed = student.removeModule(moduleCode);
         if (removed) {
+            storage.saveStudentList(db);
             return new CommandResult("Removed module " + moduleCode + " from " + student.getName());
         }
-        storage.saveStudentList(db);
 
         return new CommandResult(
                 "Module " + moduleCode + " not found for " + student.getName()

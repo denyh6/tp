@@ -14,12 +14,15 @@ public class AddCommand implements Command {
     private final int index;
     private final String moduleCode;
     private final Grade grade;
+    private final Integer credits;
+
     private boolean wasExecuted = false;
 
-    public AddCommand(int index, String moduleCode, Grade grade) {
+    public AddCommand(int index, String moduleCode, Grade grade, Integer credits) {
         this.index = index;
         this.moduleCode = moduleCode.toUpperCase();
         this.grade = grade;
+        this.credits = credits;
     }
 
     @Override
@@ -34,8 +37,12 @@ public class AddCommand implements Command {
         }
 
         Student student = db.getStudent(index-1);
-
-        Module module = new Module(moduleCode, grade);
+        Module module;
+        if (credits != null) {
+            module = new Module(moduleCode, grade, credits);
+        } else {
+            module = new Module(moduleCode, grade);
+        }
         student.addModule(module);
         storage.saveStudentList(db);
         wasExecuted = true;

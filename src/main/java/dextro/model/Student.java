@@ -65,21 +65,36 @@ public class Student {
     }
 
     public double calculateCap() {
-        if (modules.isEmpty()) {
+        double totalPoints = 0.0;
+        int totalCredits = 0;
+
+        for (Module module : modules) {
+            Grade grade = module.getGrade();
+
+            if (grade.getCountsToGpa()) {
+                int credits = module.getCredits();
+                totalPoints += grade.getCap() * credits;
+                totalCredits += credits;
+            }
+        }
+
+        if (totalCredits == 0) {
             return 0.0;
         }
-        double totalPoints = 0.0;
-        int count = 0;
-        for (Module module : modules) {
-            totalPoints += module.getGrade().getCap();
-            count++;
-        }
-        return totalPoints / count;
+
+        return totalPoints / totalCredits;
     }
 
     public int getTotalMCs() {
-        // Assuming each module is 4 MCs as per the example
-        return modules.size() * 4;
+        int total = 0;
+
+        for (Module module : modules) {
+            if (module.getGrade().getCountsToCompletion()) {
+                total += module.getCredits();
+            }
+        }
+
+        return total;
     }
 
     public String getProgressStatus() {
