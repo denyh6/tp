@@ -1,7 +1,5 @@
 package dextro.model.record;
 
-import dextro.model.Grade;
-import dextro.model.Module;
 import dextro.model.Student;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -24,8 +21,18 @@ class StudentDatabaseTest {
     @BeforeEach
     void setUp() {
         db = new StudentDatabase();
-        alice = new Student.Builder("ALICE").phone("91234567").email("alice@mail.com").address("Addr1").course("CS").build();
-        bob   = new Student.Builder("BOB").phone("98765432").email("bob@mail.com").address("Addr2").course("CEG").build();
+        alice = new Student.Builder(
+                "ALICE")
+                .phone("91234567")
+                .email("alice@mail.com")
+                .address("Addr1")
+                .course("Computer Science").build();
+        bob   = new Student.Builder(
+                "BOB")
+                .phone("98765432")
+                .email("bob@mail.com")
+                .address("Addr2")
+                .course("Computer Engineering").build();
     }
 
     // ===== addStudent / getStudent / getStudentCount =====

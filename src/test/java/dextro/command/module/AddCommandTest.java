@@ -4,7 +4,6 @@ import dextro.app.Storage;
 import dextro.command.CommandResult;
 import dextro.exception.CommandException;
 import dextro.model.Grade;
-import dextro.model.Module;
 import dextro.model.Student;
 import dextro.model.record.StudentDatabase;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class AddCommandTest {
 

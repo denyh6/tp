@@ -22,9 +22,24 @@ class DeleteCommandTest {
     void setUp() {
         db = new StudentDatabase();
         storage = new Storage("./data/DextroStudentList.txt");
-        db.addStudent(new Student.Builder("ALICE").phone("91234567").email("a@mail.com").address("Addr1").course("CS").build());
-        db.addStudent(new Student.Builder("BOB").phone("98765432").email("b@mail.com").address("Addr2").course("IT").build());
-        db.addStudent(new Student.Builder("CHARLIE").phone("81234567").email("c@mail.com").address("Addr3").course("CEG").build());
+        db.addStudent(new Student.Builder(
+                "ALICE")
+                .phone("91234567")
+                .email("a@mail.com")
+                .address("Addr1")
+                .course("Computer Science").build());
+        db.addStudent(new Student.Builder(
+                "BOB")
+                .phone("98765432")
+                .email("b@mail.com")
+                .address("Addr2")
+                .course("Information Technology").build());
+        db.addStudent(new Student.Builder(
+                "CHARLIE")
+                .phone("81234567")
+                .email("c@mail.com")
+                .address("Addr3")
+                .course("Computer Engineering").build());
     }
 
     // ===== execute(db, storage) =====

@@ -63,13 +63,13 @@ class StudentTest {
     }
 
     @Test
-    void builder_name_blankNameIgnored_keepsPreviousName() {
+    void builderName_blankNameIgnored_keepsPreviousName() {
         Student s = new Student.Builder("ALICE").name("  ").build();
         assertEquals("ALICE", s.getName());
     }
 
     @Test
-    void builder_name_nullIgnored_keepsPreviousName() {
+    void builderName_nullIgnored_keepsPreviousName() {
         Student s = new Student.Builder("ALICE").name(null).build();
         assertEquals("ALICE", s.getName());
     }
@@ -212,28 +212,28 @@ class StudentTest {
     }
 
     @Test
-    void getProgressStatus_40mcs_onTrack() {
+    void getProgressStatus_fortyMcs_onTrack() {
         Student s = new Student.Builder("ALICE").build();
         s.addModule(new Module("CS2113", Grade.A, 40));
         assertEquals("On Track", s.getProgressStatus());
     }
 
     @Test
-    void getProgressStatus_80mcs_satisfactory() {
+    void getProgressStatus_eightyMcs_satisfactory() {
         Student s = new Student.Builder("ALICE").build();
         s.addModule(new Module("CS2113", Grade.A, 80));
         assertEquals("Satisfactory", s.getProgressStatus());
     }
 
     @Test
-    void getProgressStatus_120mcs_goodProgress() {
+    void getProgressStatus_oneTwentyMcs_goodProgress() {
         Student s = new Student.Builder("ALICE").build();
         s.addModule(new Module("CS2113", Grade.A, 120));
         assertEquals("Good Progress", s.getProgressStatus());
     }
 
     @Test
-    void getProgressStatus_160mcs_completed() {
+    void getProgressStatus_oneSixtyMcs_completed() {
         Student s = new Student.Builder("ALICE").build();
         s.addModule(new Module("CS2113", Grade.A, 160));
         assertEquals("Completed", s.getProgressStatus());

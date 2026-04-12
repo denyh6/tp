@@ -184,17 +184,17 @@ class ValidatorTest {
     // ===== validateGrade =====
 
     @Test
-    void validateGrade_aPlus_returnsGrade() throws ParseException {
+    void validateGrade_gradeAPlus_returns() throws ParseException {
         assertEquals(Grade.A_PLUS, Validator.validateGrade("A+"));
     }
 
     @Test
-    void validateGrade_f_returnsGrade() throws ParseException {
+    void validateGrade_gradeF_returns() throws ParseException {
         assertEquals(Grade.F, Validator.validateGrade("F"));
     }
 
     @Test
-    void validateGrade_s_returnsGrade() throws ParseException {
+    void validateGrade_gradeS_returnsGrade() throws ParseException {
         assertEquals(Grade.SATISFACTORY, Validator.validateGrade("S"));
     }
 
