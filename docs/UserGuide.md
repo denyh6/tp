@@ -153,12 +153,36 @@ Prefixes must be separated from text before with a space.
 ---
 
 ### `status`
-**Description:** Shows the GPA, degree completion progress and summary of a student.
+**Description:** Shows the GPA, degree completion progress and summary of a student. Displays all modules sorted by grade (highest to lowest) along with module statistics including grade distribution, highest grade, and lowest grade.
 
 **Syntax:**
 ```
 status INDEX
 ```
+
+**Example:**
+```
+> status 1
+----------------------------------------------------------------------------------------------------
+Index 1: Alice, Computer Science, Cap 4.8, 16/160 MCs completed. Status: Just Started.
+Modules and Grades:
+  - CG1111A: A+ (4 MCs)
+  - CS2113: A (4 MCs)
+  - CS9999: A (4 MCs)
+  - CS2101: B+ (4 MCs)
+
+Module Statistics:
+  Grade Distribution: 1 A+, 2 A's, 1 B+
+  Highest Grade: A+ (5.0)
+  Lowest Grade: B+ (4.0)
+----------------------------------------------------------------------------------------------------
+```
+
+**Notes:**
+- Modules are automatically sorted by grade from highest to lowest
+- Module statistics exclude S/U (Satisfactory/Unsatisfactory) grades
+- Grade distribution shows the count of each grade obtained
+- If no modules have been added, displays "No modules added yet."
 
 ---
 
