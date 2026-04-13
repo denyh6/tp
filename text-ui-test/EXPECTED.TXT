@@ -76,11 +76,21 @@ Index 1: John Doe, Computer Science, Cap 4.7, 6/160 MCs completed. Status: Just 
 Modules and Grades:
   - CS2113: A (4 MCs)
   - MA1511: B+ (2 MCs)
+
+Module Statistics:
+  Grade Distribution: 1 A, 1 B+
+  Highest Grade: A (5.0)
+  Lowest Grade: B+ (4.0)
 ----------------------------------------------------------------------------------------------------
 > ----------------------------------------------------------------------------------------------------
 Index 2: Jane Tan, Business Analytics, Cap 4.5, 4/160 MCs completed. Status: Just Started.
 Modules and Grades:
   - ACC1701: A- (4 MCs)
+
+Module Statistics:
+  Grade Distribution: 1 A-
+  Highest Grade: A- (4.5)
+  Lowest Grade: A- (4.5)
 ----------------------------------------------------------------------------------------------------
 > ----------------------------------------------------------------------------------------------------
 Here are the matching students in your list:
