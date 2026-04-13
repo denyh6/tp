@@ -2,8 +2,16 @@ package dextro.command;
 
 import dextro.app.Storage;
 import dextro.exception.CommandException;
+import dextro.model.Grade;
+import dextro.model.Module;
 import dextro.model.Student;
 import dextro.model.record.StudentDatabase;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class StatusCommand implements Command {
 
@@ -50,13 +58,22 @@ public class StatusCommand implements Command {
 
         // Add module and grade details
         if (!student.getModules().isEmpty()) {
+            // Sort modules by grade (highest to lowest), then by code
+            List<Module> sortedModules = student.getModules().stream()
+                    .sorted(Comparator.comparing((Module m) -> m.getGrade().getCap()).reversed()
+                            .thenComparing(Module::getCode))
+                    .collect(Collectors.toList());
+
             result.append("\nModules and Grades:");
-            for (dextro.model.Module module : student.getModules()) {
+            for (Module module : sortedModules) {
                 result.append(String.format("\n  - %s: %s (%d MCs)",
                         module.getCode(),
                         module.getGrade(),
                         module.getCredits()));
             }
+
+            // Add module statistics
+            result.append(generateModuleStatistics(student.getModules()));
         } else {
             result.append("\nNo modules added yet.");
         }
@@ -79,5 +96,74 @@ public class StatusCommand implements Command {
     @Override
     public boolean isUndoable() {
         return false;
+    }
+
+    /**
+     * Generates module statistics including grade distribution, highest/lowest grades, and average.
+     *
+     * @param modules List of modules to analyze
+     * @return Formatted string with module statistics
+     */
+    private String generateModuleStatistics(List<Module> modules) {
+        StringBuilder stats = new StringBuilder();
+        stats.append("\n\nModule Statistics:");
+
+        // Count modules by grade
+        Map<Grade, Integer> gradeCount = new HashMap<>();
+        Grade highestGrade = null;
+        Grade lowestGrade = null;
+        double totalGradePoints = 0.0;
+        int gradedModuleCount = 0;
+
+        for (Module module : modules) {
+            Grade grade = module.getGrade();
+            gradeCount.put(grade, gradeCount.getOrDefault(grade, 0) + 1);
+
+            // Track highest and lowest grades (only for graded modules)
+            if (grade.getCountsToGpa()) {
+                if (highestGrade == null || grade.getCap() > highestGrade.getCap()) {
+                    highestGrade = grade;
+                }
+                if (lowestGrade == null || grade.getCap() < lowestGrade.getCap()) {
+                    lowestGrade = grade;
+                }
+                totalGradePoints += grade.getCap();
+                gradedModuleCount++;
+            }
+        }
+
+        // Display grade distribution (sorted by grade from highest to lowest)
+        stats.append("\n  Grade Distribution: ");
+        boolean first = true;
+        List<Map.Entry<Grade, Integer>> sortedGrades = gradeCount.entrySet().stream()
+                .sorted((e1, e2) -> {
+                    // First sort by CAP (descending)
+                    int capCompare = Double.compare(e2.getKey().getCap(), e1.getKey().getCap());
+                    if (capCompare != 0) {
+                        return capCompare;
+                    }
+                    // If CAP is equal (e.g., A+ and A both 5.0), sort by enum ordinal
+                    // This ensures A+ comes before A
+                    return Integer.compare(e1.getKey().ordinal(), e2.getKey().ordinal());
+                })
+                .collect(Collectors.toList());
+
+        for (Map.Entry<Grade, Integer> entry : sortedGrades) {
+            if (!first) {
+                stats.append(", ");
+            }
+            int count = entry.getValue();
+            String gradeName = entry.getKey().toString();
+            stats.append(String.format("%d %s%s", count, gradeName, count > 1 ? "'s" : ""));
+            first = false;
+        }
+
+        // Display highest and lowest grades
+        if (highestGrade != null && lowestGrade != null) {
+            stats.append(String.format("\n  Highest Grade: %s (%.1f)", highestGrade, highestGrade.getCap()));
+            stats.append(String.format("\n  Lowest Grade: %s (%.1f)", lowestGrade, lowestGrade.getCap()));
+        }
+
+        return stats.toString();
     }
 }
