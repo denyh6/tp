@@ -14,9 +14,9 @@ database "DextroStudentList.txt" as DataFile
 
 User      ..>  [UI]      : input / output
 
-[UI]      -->  [Logic]  : raw input
-[Logic]  -->  [Model]   : reads / mutates
-[Logic]  -->  [Storage] : saves
+[UI]      -->  [Parser]  : raw input
+[Parser]  -->  [Model]   : reads / mutates
+[Parser]  -->  [Storage] : saves
 [Model]   -->  [UI]      : result
 
 [Main]    ..>  [UI]      : creates
@@ -26,6 +26,6 @@ User      ..>  [UI]      : input / output
 [Storage] ..>  DataFile  : reads / writes
 
 [UI]      -->  Commons   : uses
-[Logic]  -->  Commons   : uses
+[Parser]  -->  Commons   : uses
 
 @enduml
