@@ -60,7 +60,8 @@ class StatusCommandTest {
         CommandResult result = cmd.execute(db, storage);
 
         String expectedMessage = "Index 1: Alice, Computer Science, Cap 0.0, 0/160 MCs completed. "
-                + "Status: Just Started.";
+                + "Status: Just Started.\n"
+                + "No modules added yet.";
         assertEquals(expectedMessage, result.getMessage());
         assertFalse(result.shouldExit());
     }
@@ -75,6 +76,9 @@ class StatusCommandTest {
 
         assertTrue(result.getMessage().contains("Cap 4.5"));
         assertTrue(result.getMessage().contains("8/160 MCs completed"));
+        assertTrue(result.getMessage().contains("Modules and Grades:"));
+        assertTrue(result.getMessage().contains("CS2113: A (4 MCs)"));
+        assertTrue(result.getMessage().contains("CS2101: B+ (4 MCs)"));
     }
 
     @Test

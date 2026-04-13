@@ -39,16 +39,31 @@ public class StatusCommand implements Command {
         String status = student.getProgressStatus();
         assert status != null && !status.isEmpty() : "Progress status should not be null or empty";
 
-        String result = String.format("Index %d: %s, %s, Cap %.1f, %d/160 MCs completed. Status: %s.",
+        StringBuilder result = new StringBuilder();
+        result.append(String.format("Index %d: %s, %s, Cap %.1f, %d/160 MCs completed. Status: %s.",
                 index,
                 student.getName(),
                 student.getCourse(),
                 cap,
                 totalMCs,
-                status);
+                status));
 
-        assert result != null && !result.isEmpty() : "Result message should not be null or empty";
-        return new CommandResult(result, false);
+        // Add module and grade details
+        if (!student.getModules().isEmpty()) {
+            result.append("\nModules and Grades:");
+            for (dextro.model.Module module : student.getModules()) {
+                result.append(String.format("\n  - %s: %s (%d MCs)",
+                        module.getCode(),
+                        module.getGrade(),
+                        module.getCredits()));
+            }
+        } else {
+            result.append("\nNo modules added yet.");
+        }
+
+        String resultString = result.toString();
+        assert resultString != null && !resultString.isEmpty() : "Result message should not be null or empty";
+        return new CommandResult(resultString, false);
     }
 
     @Override

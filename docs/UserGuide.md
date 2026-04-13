@@ -224,6 +224,8 @@ Adding duplicate modules under the same student is not allowed.
 
 Modules are validated against a pattern that fits all existing NUS module codes; non-existent modules that follow the same format are allowed.
 
+**Note:** If CREDITS is not specified, the module will default to 4 MCs (e.g., `add 1 CS2113/A` will add CS2113 with 4 MCs).
+
 ---
 
 ### `remove`
