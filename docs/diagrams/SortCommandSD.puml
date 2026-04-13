@@ -1,0 +1,75 @@
+@startuml
+
+skinparam style strictuml
+
+
+actor User
+participant ":SortCommand" as SC
+participant "db:StudentDatabase" as DB
+participant "sortedList:ArrayList" as AL
+participant "student:Student" as S
+
+User -> SC : execute(db)
+activate SC
+
+SC -> DB : getAllStudents()
+activate DB
+DB -->> SC : List<Student> students
+deactivate DB
+
+create AL
+SC -> AL : new ArrayList(students)
+activate AL
+AL -->> SC
+deactivate AL
+
+alt category == "name"
+    SC -> AL : sort(Comparator.comparing(Student::getName))
+    activate AL
+    AL -->> SC
+    deactivate AL
+else category == "course"
+    SC -> AL : sort(Comparator.comparing(Student::getCourse))
+    activate AL
+    AL -->> SC
+    deactivate AL
+else category == "cap"
+    SC -> AL : sort(Comparator.comparingDouble(Student::calculateCap))
+    activate AL
+    AL -->> SC
+    deactivate AL
+else category == "mcs"
+    SC -> AL : sort(Comparator.comparingInt(Student::getTotalMCs))
+    activate AL
+    AL -->> SC
+    deactivate AL
+end
+
+loop for each student in sortedList
+    SC -> S : toString()
+    activate S
+    S -->> SC : stringRep
+    deactivate S
+
+    alt category == "cap"
+        SC -> S : calculateCap()
+        activate S
+        S -->> SC : cap
+        deactivate S
+    else category == "mcs"
+        SC -> S : getTotalMCs()
+        activate S
+        S -->> SC : mcs
+        deactivate S
+    end
+end
+
+create participant "result:CommandResult" as CR
+SC -> CR : new CommandResult(feedback, false)
+activate CR
+CR -->> SC
+deactivate CR
+
+SC -->> User : result
+deactivate SC
+@enduml
