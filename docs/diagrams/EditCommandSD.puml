@@ -21,10 +21,10 @@ activate Parser
 
 Parser -> EditCommand : new EditCommand(index, name, phone,\nemail, address, course, moduleCode, grade)
 activate EditCommand
-EditCommand --> Parser : editCommand
+EditCommand -->> Parser : editCommand
 deactivate EditCommand
 
-Parser --> App : editCommand
+Parser -->> App : editCommand
 deactivate Parser
 
 App -> EditCommand : execute(db, storage)
@@ -38,14 +38,14 @@ deactivate StudentDatabase
 alt index out of range
   EditCommand -> CommandResult : new CommandResult("Index should be within range.")
   activate CommandResult
-  CommandResult --> EditCommand : result
+  CommandResult -->> EditCommand : result
   deactivate CommandResult
 
-  EditCommand --> App : result
+  EditCommand -->> App : result
 else index valid
   EditCommand -> StudentDatabase : getStudent(index)
   activate StudentDatabase
-  StudentDatabase --> EditCommand : existing (Student)
+  StudentDatabase -->> EditCommand : existing (Student)
   deactivate StudentDatabase
 
 
@@ -53,7 +53,7 @@ else index valid
   opt moduleCode != null
     EditCommand -> Student : getModules()
     activate Student
-    Student --> EditCommand : List<Module>
+    Student -->> EditCommand : List<Module>
     deactivate Student
 
     EditCommand -> EditCommand : check moduleCode exists in list
@@ -62,10 +62,10 @@ else index valid
     opt module not found
       EditCommand -> CommandResult : new CommandResult("Module not found.")
       activate CommandResult
-      CommandResult --> EditCommand : result
+      CommandResult -->> EditCommand : result
       deactivate CommandResult
 
-      EditCommand --> App : result
+      EditCommand -->> App : result
     end
     deactivate EditCommand
   end
@@ -82,47 +82,47 @@ else index valid
 
   StudentBuilder -> Student : new Student(builder)
   activate Student
-  Student --> StudentBuilder : updatedStudent
+  Student -->> StudentBuilder : updatedStudent
   deactivate Student
 
-  StudentBuilder --> EditCommand : updatedStudent
+  StudentBuilder -->> EditCommand : updatedStudent
   deactivate StudentBuilder
 
   loop for each Module in existing.getModules()
     alt moduleCode matches module code
       EditCommand -> Module : new Module(code, newGrade)
       activate Module
-      Module --> EditCommand : updatedModule
+      Module -->> EditCommand : updatedModule
       deactivate Module
 
       EditCommand -> Student : addModule(updatedModule)
       activate Student
-      Student --> EditCommand
+      Student -->> EditCommand
       deactivate Student
     else
       EditCommand -> Student : addModule(existingModule)
       activate Student
-      Student --> EditCommand
+      Student -->> EditCommand
       deactivate Student
     end
   end
 
   EditCommand -> StudentDatabase : updateStudent(index, updatedStudent)
   activate StudentDatabase
-  StudentDatabase --> EditCommand
+  StudentDatabase -->> EditCommand
   deactivate StudentDatabase
 
   EditCommand -> Storage : saveStudentList(db)
   activate Storage
-  Storage --> EditCommand
+  Storage -->> EditCommand
   deactivate Storage
 
   EditCommand -> CommandResult : new CommandResult("Student updated successfully.")
   activate CommandResult
-  CommandResult --> EditCommand : result
+  CommandResult -->> EditCommand : result
   deactivate CommandResult
 
-  EditCommand --> App : result
+  EditCommand -->> App : result
 end
 deactivate EditCommand
 @enduml

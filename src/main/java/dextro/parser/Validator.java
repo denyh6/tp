@@ -91,10 +91,60 @@ public class Validator {
     }
 
     public static Grade validateGrade(String grade) throws ParseException {
-        try {
-            return Grade.fromString(grade.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new ParseException("Invalid grade: " + grade);
+        if (grade == null) {
+            throw new ParseException("Grade not provided");
         }
+        return Grade.fromString(grade.toUpperCase());
+
+    }
+
+    public static Integer validateCredits(String credits) throws ParseException {
+        int out;
+        if (credits == null || credits.isBlank()) {
+            return null;
+        }
+        try {
+            out = Integer.parseInt(credits);
+        } catch (NumberFormatException e) {
+            throw new ParseException("Invalid credits value: " +
+                    credits +
+                    ". Credits must be a positive integer.");
+        }
+        if (out <= 0) {
+            throw new ParseException("Credits must be positive");
+        }
+
+        return out;
+    }
+
+    public static String[] validateModuleFormat(String input) throws ParseException {
+        String[] parts = input.split("/", -1); // -1 to keep trailing empty strings
+        if (parts[0].isBlank()) {
+            throw new ParseException("Module code cannot be empty (e.g., CS2113/A or CS2113/A/2)");
+        }
+        if (parts.length < 2 || parts[1].isBlank()) {
+            throw new ParseException("Grade cannot be empty (e.g., CS2113/A or CS2113/A/2)");
+        }
+        if (parts.length == 3 && parts[2].isBlank()) {
+            throw new ParseException("Credits cannot be empty if slash is provided (e.g., CS2113/A/2)");
+        }
+        if (parts.length > 3) {
+            throw new ParseException("Module format must be CODE/GRADE[/CREDITS] (e.g., CS2113/A or CS2113/A/2)");
+        }
+
+        return parts;
+    }
+
+    public static int validateIndex(String raw) throws ParseException {
+        int index;
+        try {
+            index = Integer.parseInt(raw.strip());
+        } catch (NumberFormatException e) {
+            throw new ParseException("Invalid student index: " + raw + ". Index must be an integer");
+        }
+        if (index <= 0) {
+            throw new ParseException("Index must be positive");
+        }
+        return index;
     }
 }

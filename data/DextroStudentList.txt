@@ -1,2 +1,2 @@
-JOHN/N.A./N.A./N.A./N.A./[MA1521/B+/4, CS2101/B+/4]
-Alice Tan/91234567/alice@example.com/Blk 123 Clementi/Computer Science/[CS2113/A/4, MA1521/A-/4, CS3223/A+/4]
+JOHN/N.A./N.A./N.A./N.A./[MA1521/B+/4]
+Alice Tan/91234567/alice@example.com/Blk 123 Clementi/Computer Science/[CS2113/A/4, CS2101/B/4]

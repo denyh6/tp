@@ -3,11 +3,6 @@ skinparam classAttributeIconSize 0
 skinparam style strictuml
 
 class App {
-    -parser: Parser
-    -db: StudentDatabase
-    -ui: Ui
-    -storage: Storage
-    -history: CommandHistory
     +App(Ui, Parser, StudentDatabase, Storage)
     +run(): void
 }
@@ -54,11 +49,11 @@ class CommandResult {
     +shouldExit(): boolean
 }
 
-App --> Parser : uses
-App --> StudentDatabase : uses
-App --> Ui : uses
-App --> Storage : uses
-App --> CommandHistory : uses
+App --> "1" Parser : uses
+App --> "1" StudentDatabase : uses
+App --> "1" Ui : uses
+App --> "1" Storage : uses
+App --> "1" CommandHistory : uses
 App ..> Command : calls execute()
 App ..> CommandResult : reads
 Parser ..> Command : creates

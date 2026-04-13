@@ -1,26 +1,51 @@
 @startuml
+skinparam style strictuml
 actor User
+
 participant ":App" as App
 participant ":Parser" as Parser
-participant "UndoCommand" as Undo
+participant ":UndoCommand" as Undo
 participant ":CommandHistory" as History
 participant ":LastCommand" as LastCmd
 participant ":StudentDatabase" as DB
 participant ":Storage" as Storage
+participant ":Ui" as Ui
 
 title UndoCommand - Sequence Diagram
 
 User -> App : "undo"
+activate App
 App -> Parser : parse("undo")
-Parser -> Undo : new UndoCommand(history)
-Parser --> App : command
+activate Parser
+Parser -> Undo ** : create(history)
+activate Undo
+Undo -->> Parser
+deactivate Undo
+Parser -->> App : command
+deactivate Parser
 App -> Undo : execute(db, storage)
+activate Undo
 Undo -> History : pop()
-History --> Undo : lastCommand
+activate History
+History -->> Undo : lastCommand
+deactivate History
 Undo -> LastCmd : undo(db, storage)
+activate LastCmd
 LastCmd -> DB : revert changes
+activate DB
+DB -->> LastCmd
+deactivate DB
 LastCmd -> Storage : saveStudentList(db)
-LastCmd --> Undo : CommandResult(undo message)
-Undo --> App : CommandResult(undo message)
-App -> User : show undo result
+activate Storage
+Storage -->> LastCmd
+deactivate Storage
+LastCmd -->> Undo : commandResult(undo message)
+deactivate LastCmd
+Undo -->> App : commandResult(undo message)
+deactivate Undo
+App -> Ui : show(result.getMessage())
+activate Ui
+Ui -->> User : display undo result
+deactivate Ui
+deactivate App
 @enduml

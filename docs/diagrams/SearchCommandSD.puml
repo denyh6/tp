@@ -13,44 +13,44 @@ activate SC
 
 SC -> DB : getAllStudents()
 activate DB
-DB --> SC : List<Student> students
+DB -->> SC : List<Student> students
 deactivate DB
 
 loop for each student in students
     alt course != null
         SC -> S : getCourse()
         activate S
-        S --> SC : courseName
+        S -->> SC : courseName
         deactivate S
 
         opt courseName contains search string
             SC -> S : getName()
             activate S
-            S --> SC : name
+            S -->> SC : name
             deactivate S
         end
 
     else moduleCode != null
         SC -> S : getModules()
         activate S
-        S --> SC : List<Module>
+        S -->> SC : List<Module>
         deactivate S
 
         loop for each module in student
             SC -> M : getCode()
             activate M
-            M --> SC : code
+            M -->> SC : code
             deactivate M
 
             opt code contains moduleCode
                 SC -> S : getName()
                 activate S
-                S --> SC : name
+                S -->> SC : name
                 deactivate S
 
                 SC -> M : getGrade()
                 activate M
-                M --> SC : grade
+                M -->> SC : grade
                 deactivate M
             end
         end
@@ -60,9 +60,9 @@ end
 create participant "result:CommandResult" as CR
 SC -> CR : new CommandResult(feedback, false)
 activate CR
-CR --> SC
+CR -->> SC
 deactivate CR
 
-SC --> User : result
+SC -->> User : result
 deactivate SC
 @enduml

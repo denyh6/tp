@@ -2,30 +2,77 @@
 skinparam style strictuml
 actor User
 
+participant ":App" as App
+participant ":Parser" as Parser
+participant ":ArgumentTokenizer" as ArgumentTokenizer
+participant ":CreateCommand" as CreateCommand
+participant ":Student.Builder" as Builder
+participant ":Student" as Student
+participant ":StudentDatabase" as StudentDatabase
+participant ":Storage" as Storage
+participant ":Ui" as Ui
+
 User -> App : enter "create n/Alice p/91234567\ne/alice@u.nus.edu c/CS"
+activate App
 App -> Parser : parse(input)
-Parser -> ArgumentTokenizer : new ArgumentTokenizer(args, "n/","p/","e/","a/","c/")
-ArgumentTokenizer --> Parser : tokenMap
+activate Parser
+Parser -> ArgumentTokenizer ** : create(args, "n/","p/","e/","a/","c/")
+activate ArgumentTokenizer
+ArgumentTokenizer -->> Parser : tokenMap
+deactivate ArgumentTokenizer
 Parser -> Parser : validateName(name)
+activate Parser
+deactivate Parser
 Parser -> Parser : validatePhone(phone)
+activate Parser
+deactivate Parser
 Parser -> Parser : validateEmail(email)
+activate Parser
+deactivate Parser
 Parser -> Parser : validateAddress(address)
-Parser -> CreateCommand : new CreateCommand(name, phone, email, address, course)
-CreateCommand --> Parser : createCommand
-Parser --> App : createCommand
+activate Parser
+deactivate Parser
+Parser -> CreateCommand ** : create(name, phone, email, address, course)
+activate CreateCommand
+CreateCommand -->> Parser
+deactivate CreateCommand
+Parser -->> App : createCommand
+deactivate Parser
 App -> CreateCommand : execute(db, storage)
-CreateCommand -> "Student.Builder" : new Builder(name)
-"Student.Builder" -> "Student.Builder" : phone(phone)
-"Student.Builder" -> "Student.Builder" : email(email)
-"Student.Builder" -> "Student.Builder" : address(address)
-"Student.Builder" -> "Student.Builder" : course(course)
-"Student.Builder" -> Student : build()
-Student --> CreateCommand : student
+activate CreateCommand
+CreateCommand -> Builder ** : create(name)
+activate Builder
+Builder -> Builder : phone(phone)
+activate Builder
+deactivate Builder
+Builder -> Builder : email(email)
+activate Builder
+deactivate Builder
+Builder -> Builder : address(address)
+activate Builder
+deactivate Builder
+Builder -> Builder : course(course)
+activate Builder
+deactivate Builder
+Builder -> Student ** : build()
+activate Student
+Student -->> Builder
+deactivate Student
+Builder -->> CreateCommand : student
+deactivate Builder
 CreateCommand -> StudentDatabase : addStudent(student)
+activate StudentDatabase
+StudentDatabase -->> CreateCommand
+deactivate StudentDatabase
 CreateCommand -> Storage : saveStudentList(db)
-CreateCommand -> CommandResult : new CommandResult("Student created: Alice")
-CommandResult --> CreateCommand : result
-CreateCommand --> App : result
+activate Storage
+Storage -->> CreateCommand
+deactivate Storage
+CreateCommand -->> App : commandResult
+deactivate CreateCommand
 App -> Ui : show(result.getMessage())
-Ui --> User : display confirmation
+activate Ui
+Ui -->> User : display confirmation
+deactivate Ui
+deactivate App
 @enduml

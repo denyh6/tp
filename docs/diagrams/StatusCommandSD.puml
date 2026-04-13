@@ -1,26 +1,49 @@
 @startuml
+skinparam style strictuml
 actor User
+
 participant ":App" as App
 participant ":Parser" as Parser
 participant ":StatusCommand" as Status
 participant ":StudentDatabase" as DB
 participant ":Student" as Student
+participant ":Ui" as Ui
 
 title StatusCommand - Sequence Diagram
 
 User -> App : "status 1"
+activate App
 App -> Parser : parse(input)
-Parser -> Status : new StatusCommand(1)
-Parser --> App : command
+activate Parser
+Parser -> Status ** : create(1)
+activate Status
+Status -->> Parser
+deactivate Status
+Parser -->> App : command
+deactivate Parser
 App -> Status : execute(db, storage)
+activate Status
 Status -> DB : getStudent(0)
-DB --> Status : student
+activate DB
+DB -->> Status : student
+deactivate DB
 Status -> Student : calculateCap()
-Student --> Status : cap
+activate Student
+Student -->> Status : cap
+deactivate Student
 Status -> Student : getTotalMCs()
-Student --> Status : totalMCs
+activate Student
+Student -->> Status : totalMCs
+deactivate Student
 Status -> Student : getProgressStatus()
-Student --> Status : status
-Status --> App : CommandResult(formatted status)
-App -> User : show status
+activate Student
+Student -->> Status : status
+deactivate Student
+Status -->> App : commandResult(formatted status)
+deactivate Status
+App -> Ui : show(result.getMessage())
+activate Ui
+Ui -->> User : display status
+deactivate Ui
+deactivate App
 @enduml

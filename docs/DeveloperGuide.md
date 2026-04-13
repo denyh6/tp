@@ -12,6 +12,10 @@ SE-EDU Addressbook 3 Developer Guide: https://se-education.org/addressbook-level
 
 The **Architecture Diagram** above explains the high-level design of the application.
 
+**Arrow notation:**
+- **Solid arrows (`-->`)** represent structural dependencies (one component uses or depends on another).
+- **Dashed arrows (`..>`)** represent instantiation or creation (one component creates instances of another).
+
 Given below is a quick overview of the main components and how they interact with each other.
 
 **Main components of the architecture**
@@ -38,14 +42,15 @@ The sequence diagram below shows how the components interact with each other for
 
 #### UI Component
 
-The `Ui` class handles all console input and output. It reads user commands from standard input via a `Scanner` and displays messages surrounded by separator lines. Output methods are static to allow calls from anywhere without needing a `Ui` instance.
+The `Ui` class handles all console input and output. It reads user commands from standard input via a `Scanner` and displays messages surrounded by separator lines.
 
 ![UiClassDiagram](images/UiClassDiagram.png)
 
 The `UI` component:
 - is instantiated once by `Main` and passed into `App`.
-- exposes `readCommand()` which `App` calls each loop iteration to obtain the next line of input.
-- exposes the static `Ui.show(String)` method, called by `App` to display command results and error messages.
+- exposes `readCommand()` (instance method) which `App` calls each loop iteration to obtain the next line of input using the instance's `Scanner`.
+- exposes the static methods `Ui.show(String)` and `Ui.line()` to allow display of command results and error messages from anywhere in the application without requiring a `Ui` reference.
+- separates concerns: input reading requires state (Scanner) and uses instance methods; output display is stateless and uses static methods for convenience.
 
 ---
 

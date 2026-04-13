@@ -2,14 +2,43 @@
 skinparam style strictuml
 actor User
 
+participant ":UI" as UI
+participant ":App" as App
+participant ":Parser" as Parser
+participant ":DeleteCommand" as DeleteCommand
+participant ":StudentDatabase" as Model
+participant ":Storage" as Storage
+
 User -> UI : "delete 1"
+activate UI
 UI -> App : readCommand()
+activate App
 App -> Parser : parse("delete 1")
-Parser --> App : <<DeleteCommand>>
-App -> Model : execute(db, storage)\n[DeleteCommand]
-Model --> App : <<CommandResult>>
-App -> Storage : saveStudentList(db)\n[via DeleteCommand]
-Storage --> App : void
+activate Parser
+Parser -> DeleteCommand ** : create
+activate DeleteCommand
+DeleteCommand --> Parser
+deactivate DeleteCommand
+Parser -->> App : deleteCommand
+deactivate Parser
+
+App -> DeleteCommand : execute(db, storage)
+activate DeleteCommand
+DeleteCommand -> Model : removeStudent(0)
+activate Model
+Model -->> DeleteCommand : deletedStudent
+deactivate Model
+
+DeleteCommand -> Storage : saveStudentList(db)
+activate Storage
+Storage -->> DeleteCommand
+deactivate Storage
+
+DeleteCommand -->> App : commandResult
+deactivate DeleteCommand
+
 App -> UI : show(result.getMessage())
 UI --> User : display result
+deactivate App
+deactivate UI
 @enduml

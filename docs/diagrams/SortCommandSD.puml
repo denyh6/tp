@@ -14,52 +14,52 @@ activate SC
 
 SC -> DB : getAllStudents()
 activate DB
-DB --> SC : List<Student> students
+DB -->> SC : List<Student> students
 deactivate DB
 
 create AL
 SC -> AL : new ArrayList(students)
 activate AL
-AL --> SC
+AL -->> SC
 deactivate AL
 
 alt category == "name"
     SC -> AL : sort(Comparator.comparing(Student::getName))
     activate AL
-    AL --> SC
+    AL -->> SC
     deactivate AL
 else category == "course"
     SC -> AL : sort(Comparator.comparing(Student::getCourse))
     activate AL
-    AL --> SC
+    AL -->> SC
     deactivate AL
 else category == "cap"
     SC -> AL : sort(Comparator.comparingDouble(Student::calculateCap))
     activate AL
-    AL --> SC
+    AL -->> SC
     deactivate AL
 else category == "mcs"
     SC -> AL : sort(Comparator.comparingInt(Student::getTotalMCs))
     activate AL
-    AL --> SC
+    AL -->> SC
     deactivate AL
 end
 
 loop for each student in sortedList
     SC -> S : toString()
     activate S
-    S --> SC : stringRep
+    S -->> SC : stringRep
     deactivate S
 
     alt category == "cap"
         SC -> S : calculateCap()
         activate S
-        S --> SC : cap
+        S -->> SC : cap
         deactivate S
     else category == "mcs"
         SC -> S : getTotalMCs()
         activate S
-        S --> SC : mcs
+        S -->> SC : mcs
         deactivate S
     end
 end
@@ -67,9 +67,9 @@ end
 create participant "result:CommandResult" as CR
 SC -> CR : new CommandResult(feedback, false)
 activate CR
-CR --> SC
+CR -->> SC
 deactivate CR
 
-SC --> User : result
+SC -->> User : result
 deactivate SC
 @enduml

@@ -18,10 +18,10 @@ activate Parser
 
 Parser -> FindCommand : new FindCommand(substring)
 activate FindCommand
-FindCommand --> Parser : findCommand
+FindCommand -->> Parser : findCommand
 deactivate FindCommand
 
-Parser --> App : findCommand
+Parser -->> App : findCommand
 deactivate Parser
 
 App -> FindCommand : execute(db, storage)
@@ -29,49 +29,49 @@ activate FindCommand
 
 FindCommand -> StudentDatabase : getAllStudents()
 activate StudentDatabase
-StudentDatabase --> FindCommand : List<Student>
+StudentDatabase -->> FindCommand : List<Student>
 deactivate StudentDatabase
 
 loop for each Student in list
   FindCommand -> Student : getName()
   activate Student
-  Student --> FindCommand : name
+  Student -->> FindCommand : name
   deactivate Student
 
   FindCommand -> Student : getPhone()
   activate Student
-  Student --> FindCommand : phone
+  Student -->> FindCommand : phone
   deactivate Student
 
   FindCommand -> Student : getEmail()
   activate Student
-  Student --> FindCommand : email
+  Student -->> FindCommand : email
   deactivate Student
 
   FindCommand -> Student : getAddress()
   activate Student
-  Student --> FindCommand : address
+  Student -->> FindCommand : address
   deactivate Student
 
   FindCommand -> Student : getCourse()
   activate Student
-  Student --> FindCommand : course
+  Student -->> FindCommand : course
   deactivate Student
 end
 
 alt match(es) found
   FindCommand -> CommandResult : new CommandResult(resultString, false)
   activate CommandResult
-  CommandResult --> FindCommand : result
+  CommandResult -->> FindCommand : result
   deactivate CommandResult
 else no matches
   FindCommand -> CommandResult : new CommandResult("No matching students found.")
   activate CommandResult
-  CommandResult --> FindCommand : result
+  CommandResult -->> FindCommand : result
   deactivate CommandResult
 end
 
-FindCommand --> App : result
+FindCommand -->> App : result
 deactivate FindCommand
 
 App -> User : Ui.show(result.getMessage())

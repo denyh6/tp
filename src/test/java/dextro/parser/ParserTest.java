@@ -82,7 +82,7 @@ class ParserTest {
     @Test
     void parse_deleteNonNumeric_throwsParseException() {
         ParseException e = assertThrows(ParseException.class, () -> parser.parse("delete abc"));
-        assertTrue(e.getMessage().contains("Invalid index for delete"));
+        assertTrue(e.getMessage().contains("Invalid student index: abc. Index must be an integer"));
     }
 
     @Test
@@ -119,7 +119,7 @@ class ParserTest {
 
     @Test
     void parse_addInvalidGrade_throwsParseException() {
-        assertThrows(ParseException.class, () -> parser.parse("add 1 CS2113/Z"));
+        assertThrows(IllegalArgumentException.class, () -> parser.parse("add 1 CS2113/Z"));
     }
 
     @Test

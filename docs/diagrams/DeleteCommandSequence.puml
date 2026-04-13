@@ -2,27 +2,53 @@
 skinparam style strictuml
 actor User
 
+participant ":App" as App
+participant ":Parser" as Parser
+participant ":DeleteCommand" as DeleteCommand
+participant ":StudentDatabase" as StudentDatabase
+participant ":Storage" as Storage
+participant ":Ui" as Ui
+
 User -> App : enter "delete 1"
+activate App
 App -> Parser : parse(input)
+activate Parser
 Parser -> Parser : parseDelete("1")
-Parser -> DeleteCommand : new DeleteCommand(1)
-DeleteCommand --> Parser : deleteCommand
-Parser --> App : deleteCommand
+activate Parser
+Parser -> DeleteCommand ** : create(1)
+activate DeleteCommand
+DeleteCommand -->> Parser
+deactivate DeleteCommand
+deactivate Parser
+Parser -->> App : deleteCommand
+deactivate Parser
+
 App -> DeleteCommand : execute(db, storage)
+activate DeleteCommand
 
 alt index out of bounds
-    DeleteCommand -> CommandException : throw CommandException
-    CommandException --> App : exception
+    DeleteCommand -> DeleteCommand : throw CommandException
+    DeleteCommand -->> App : exception
+    deactivate DeleteCommand
     App -> Ui : show("Error: " + message)
-    Ui --> User : display error
+    activate Ui
+    Ui -->> User : display error
+    deactivate Ui
 else valid index
     DeleteCommand -> StudentDatabase : removeStudent(0)
-    StudentDatabase --> DeleteCommand : deletedStudent
+    activate StudentDatabase
+    StudentDatabase -->> DeleteCommand : deletedStudent
+    deactivate StudentDatabase
     DeleteCommand -> Storage : saveStudentList(db)
-    DeleteCommand -> CommandResult : new CommandResult("Successfully deleted student: ...")
-    CommandResult --> DeleteCommand : result
-    DeleteCommand --> App : result
+    activate Storage
+    Storage -->> DeleteCommand
+    deactivate Storage
+    DeleteCommand -->> App : commandResult
+    deactivate DeleteCommand
     App -> Ui : show(result.getMessage())
-    Ui --> User : display confirmation
+    activate Ui
+    Ui -->> User : display confirmation
+    deactivate Ui
 end
+deactivate App
 @enduml

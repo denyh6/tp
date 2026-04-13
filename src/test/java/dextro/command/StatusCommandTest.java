@@ -79,6 +79,8 @@ class StatusCommandTest {
         assertTrue(result.getMessage().contains("Modules and Grades:"));
         assertTrue(result.getMessage().contains("CS2113: A (4 MCs)"));
         assertTrue(result.getMessage().contains("CS2101: B+ (4 MCs)"));
+        assertTrue(result.getMessage().contains("Module Statistics:"));
+        assertTrue(result.getMessage().contains("Grade Distribution:"));
     }
 
     @Test
@@ -274,5 +276,71 @@ class StatusCommandTest {
 
         assertFalse(result.shouldExit());
         assertTrue(result.getMessage().contains("40/160 MCs"));
+        assertTrue(result.getMessage().contains("Module Statistics:"));
+        assertTrue(result.getMessage().contains("Highest Grade:"));
+        assertTrue(result.getMessage().contains("Lowest Grade:"));
+    }
+
+    @Test
+    void execute_modulesSortedByGrade_highestFirst() throws CommandException {
+        student1.addModule(new Module("CS2101", Grade.B));
+        student1.addModule(new Module("CS2113", Grade.A_PLUS));
+        student1.addModule(new Module("MA1521", Grade.A));
+
+        StatusCommand cmd = new StatusCommand(1);
+        CommandResult result = cmd.execute(db, storage);
+
+        String message = result.getMessage();
+        int aIndex = message.indexOf("CS2113: A+");
+        int bIndex = message.indexOf("MA1521: A");
+        int cIndex = message.indexOf("CS2101: B");
+
+        // A+ should appear before A, A should appear before B
+        assertTrue(aIndex < bIndex);
+        assertTrue(bIndex < cIndex);
+    }
+
+    @Test
+    void execute_gradeDistribution_countsCorrectly() throws CommandException {
+        student1.addModule(new Module("CS2113", Grade.A));
+        student1.addModule(new Module("CS2101", Grade.A));
+        student1.addModule(new Module("MA1521", Grade.B));
+
+        StatusCommand cmd = new StatusCommand(1);
+        CommandResult result = cmd.execute(db, storage);
+
+        assertTrue(result.getMessage().contains("2 A's"));
+        assertTrue(result.getMessage().contains("1 B"));
+    }
+
+    @Test
+    void execute_withSuGrades_excludesFromStatistics() throws CommandException {
+        student1.addModule(new Module("CS2113", Grade.A));
+        student1.addModule(new Module("GEA1000", Grade.SATISFACTORY));
+
+        StatusCommand cmd = new StatusCommand(1);
+        CommandResult result = cmd.execute(db, storage);
+
+        String message = result.getMessage();
+        assertTrue(message.contains("Highest Grade: A"));
+        assertTrue(message.contains("Lowest Grade: A"));
+        // S/U grades should not affect highest/lowest grade statistics
+    }
+
+    @Test
+    void execute_aPlusAndA_aPlusComesFirst() throws CommandException {
+        student1.addModule(new Module("CS2113", Grade.A));
+        student1.addModule(new Module("CS2101", Grade.A_PLUS));
+
+        StatusCommand cmd = new StatusCommand(1);
+        CommandResult result = cmd.execute(db, storage);
+
+        String message = result.getMessage();
+        // Debug: print the actual message
+        System.out.println("DEBUG MESSAGE:\n" + message);
+
+        // A+ must appear before A in the distribution
+        assertTrue(message.contains("Grade Distribution: 1 A+, 1 A"),
+            "Expected 'Grade Distribution: 1 A+, 1 A' but got: " + message);
     }
 }

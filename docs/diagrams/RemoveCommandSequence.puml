@@ -2,42 +2,70 @@
 skinparam style strictuml
 actor User
 
+participant ":App" as App
+participant ":Parser" as Parser
+participant ":RemoveCommand" as RemoveCommand
+participant ":StudentDatabase" as StudentDatabase
+participant ":Student" as Student
+participant ":Module" as Module
+participant ":Storage" as Storage
+participant ":Ui" as Ui
+
 User -> App : enter "remove 1 CS2113"
+activate App
 App -> Parser : parse(input)
+activate Parser
 Parser -> Parser : parseRemove("1 CS2113")
-Parser -> RemoveCommand : new RemoveCommand(1, "CS2113")
-RemoveCommand --> Parser : removeCommand
-Parser --> App : removeCommand
+activate Parser
+deactivate Parser
+Parser -> RemoveCommand ** : create(1, "CS2113")
+activate RemoveCommand
+RemoveCommand -->> Parser
+deactivate RemoveCommand
+Parser -->> App : removeCommand
+deactivate Parser
 App -> RemoveCommand : execute(db, storage)
+activate RemoveCommand
 
 alt invalid index
-    RemoveCommand -> CommandResult : new CommandResult("Invalid student index")
-    CommandResult --> App : result
+    RemoveCommand -->> App : commandResult("Invalid student index")
 else valid index
     RemoveCommand -> StudentDatabase : getStudent(0)
-    StudentDatabase --> RemoveCommand : student
+    activate StudentDatabase
+    StudentDatabase -->> RemoveCommand : student
+    deactivate StudentDatabase
     RemoveCommand -> Student : getModules()
-    Student --> RemoveCommand : moduleList
+    activate Student
+    Student -->> RemoveCommand : moduleList
+    deactivate Student
 
     loop find module in list
         RemoveCommand -> Module : getCode()
-        Module --> RemoveCommand : code
+        activate Module
+        Module -->> RemoveCommand : code
+        deactivate Module
     end
 
     RemoveCommand -> Student : removeModule("CS2113")
-    Student --> RemoveCommand : removed (boolean)
+    activate Student
+    Student -->> RemoveCommand : removed (boolean)
+    deactivate Student
 
     alt module found and removed
         RemoveCommand -> Storage : saveStudentList(db)
-        RemoveCommand -> CommandResult : new CommandResult("Removed module CS2113 from Alice")
+        activate Storage
+        Storage -->> RemoveCommand
+        deactivate Storage
+        RemoveCommand -->> App : commandResult("Removed module CS2113 from Alice")
     else module not found
-        RemoveCommand -> CommandResult : new CommandResult("Module CS2113 not found for Alice")
+        RemoveCommand -->> App : commandResult("Module CS2113 not found for Alice")
     end
-
-    CommandResult --> RemoveCommand : result
-    RemoveCommand --> App : result
 end
+deactivate RemoveCommand
 
 App -> Ui : show(result.getMessage())
-Ui --> User : display confirmation
+activate Ui
+Ui -->> User : display confirmation
+deactivate Ui
+deactivate App
 @enduml

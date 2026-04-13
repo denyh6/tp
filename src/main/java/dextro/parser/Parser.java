@@ -70,12 +70,8 @@ public class Parser {
         if (args.strip().isBlank()) {
             throw new ParseException("Delete requires an integer index");
         }
-        try {
-            int index = Integer.parseInt(args);
-            return new DeleteCommand(index);
-        } catch (NumberFormatException e) {
-            throw new ParseException("Invalid index for delete: " + args);
-        }
+        int index = Validator.validateIndex(args);
+        return new DeleteCommand(index);
     }
 
     private Command parseAdd(String args) throws ParseException {
@@ -85,18 +81,8 @@ public class Parser {
             throw new ParseException("Add requires: index + CODE/GRADE[/CREDITS] (e.g., 3 CS2113/A or 3 CS2113/A/2)");
         }
 
-        int index;
-        try {
-            index = Integer.parseInt(tokens[0]);
-        } catch (NumberFormatException e) {
-            throw new ParseException("Invalid student index: " + tokens[0]);
-        }
-
-        String[] parts = tokens[1].split("/");
-
-        if (parts.length < 2 || parts[0].isBlank() || parts[1].isBlank()) {
-            throw new ParseException("Module format must be CODE/GRADE[/CREDITS] (e.g., CS2113/A or CS2113/A/2)");
-        }
+        int index = Validator.validateIndex(tokens[0]);
+        String[] parts = Validator.validateModuleFormat(tokens[1]);
 
         String moduleCode = Validator.validateModuleCode(parts[0].toUpperCase().strip());
         Grade grade = Validator.validateGrade(parts[1].toUpperCase().strip());
@@ -105,17 +91,7 @@ public class Parser {
             return new AddCommand(index, moduleCode, grade, null);
         }
 
-        int credits;
-        try {
-            credits = Integer.parseInt(parts[2]);
-            if (credits <= 0) {
-                throw new ParseException("Credits must be a positive integer");
-            }
-        } catch (NumberFormatException e) {
-            throw new ParseException("Invalid credits value: " + parts[2]);
-        }
-
-        return new AddCommand(index, moduleCode, grade, credits);
+        return new AddCommand(index, moduleCode, grade, Validator.validateCredits(parts[2]));
     }
 
     private Command parseRemove(String args) throws ParseException {
@@ -123,13 +99,12 @@ public class Parser {
         if (tokens.length < 2) {
             throw new ParseException("Remove requires an index and module code (e.g., 3 CS2113)");
         }
-        int index;
-        try {
-            index = Integer.parseInt(tokens[0]);
-        } catch (NumberFormatException e) {
-            throw new ParseException("Invalid student index: " + tokens[0]);
+        if (tokens[1].contains(" ")) {
+            throw new ParseException("Remove only takes one module code (e.g., remove 1 CS2113)");
         }
-        String moduleCode = tokens[1].strip().toUpperCase();
+
+        int index = Validator.validateIndex(tokens[0]);
+        String moduleCode = Validator.validateModuleCode(tokens[1].strip().toUpperCase());
         return new RemoveCommand(index, moduleCode);
     }
 
@@ -199,14 +174,7 @@ public class Parser {
             grade = Validator.validateGrade(parts[1].strip().toUpperCase());
 
             if (parts.length >= 3) {
-                try {
-                    credits = Integer.parseInt(parts[2].strip());
-                    if (credits <= 0) {
-                        throw new ParseException("Credits must be a positive integer");
-                    }
-                } catch (NumberFormatException e) {
-                    throw new ParseException("Invalid credits value: " + parts[2]);
-                }
+                credits = Validator.validateCredits(parts[2].strip());
             }
         }
 

@@ -6,12 +6,17 @@ public class Module {
     private final int credits;
 
     public Module(String code, Grade grade, int credits) {
+        assert code != null && !code.isBlank() : "Module code should not be null or blank";
+        assert grade != null : "Grade should not be null";
+        assert credits > 0 : "Credits should be positive";
         this.code = code;
         this.grade = grade;
         this.credits = credits;
     }
 
     public Module(String code, Grade grade) {
+        assert code != null && !code.isBlank() : "Module code should not be null or blank";
+        assert grade != null : "Grade should not be null";
         this.code = code;
         this.grade = grade;
         this.credits = 4; //default 4 MCs

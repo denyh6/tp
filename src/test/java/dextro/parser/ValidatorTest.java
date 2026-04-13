@@ -199,7 +199,7 @@ class ValidatorTest {
 
     @Test
     void validateGrade_invalid_throwsParseException() {
-        assertThrows(ParseException.class, () -> Validator.validateGrade("Z"));
+        assertThrows(IllegalArgumentException.class, () -> Validator.validateGrade("Z"));
     }
 
     @Test

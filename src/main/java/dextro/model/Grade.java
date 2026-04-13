@@ -47,6 +47,10 @@ public enum Grade {
                 return g;
             }
         }
+
+        if (input.isBlank()) {
+            throw new IllegalArgumentException("No grade provided");
+        }
         throw new IllegalArgumentException("Invalid grade: " + input);
     }
 

@@ -24,7 +24,7 @@ component [Storage] as Storage
 
 rectangle "  Main  " as Main
 
-User -down-> UI : input / output
+User --> UI : uses
 
 Main ..> UI      : creates
 Main ..> Parser  : creates
@@ -32,12 +32,12 @@ Main ..> Storage : creates
 Main ..> Model   : creates
 Main ..> App     : creates & runs
 
-UI    -right-> App    : readCommand()
-App   -right-> Parser : parse(input)
-Parser ..>     App    : <<Command>>
-App   -down->  Model  : execute(db, ...)
-App   -down->  Storage : execute(..., storage)
-Storage -right-> Model : load on startup
+App --> UI      : uses
+App --> Parser  : uses
+App --> Model   : uses
+App --> Storage : uses
+Parser ..> Model : creates Commands
+Storage --> Model : uses
 
 note right of Storage
   Reads/writes

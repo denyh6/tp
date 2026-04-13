@@ -2,27 +2,46 @@
 skinparam style strictuml
 actor User
 
+participant ":App" as App
+participant ":Parser" as Parser
+participant ":ListCommand" as ListCommand
+participant ":StudentDatabase" as StudentDatabase
+participant ":Student" as Student
+participant ":Ui" as Ui
+
 User -> App : enter "list"
+activate App
 App -> Parser : parse(input)
-Parser -> ListCommand : new ListCommand()
-ListCommand --> Parser : listCommand
-Parser --> App : listCommand
+activate Parser
+Parser -> ListCommand ** : create()
+activate ListCommand
+ListCommand -->> Parser
+deactivate ListCommand
+Parser -->> App : listCommand
+deactivate Parser
 App -> ListCommand : execute(db, storage)
+activate ListCommand
 ListCommand -> StudentDatabase : getAllStudents()
-StudentDatabase --> ListCommand : students
+activate StudentDatabase
+StudentDatabase -->> ListCommand : students
+deactivate StudentDatabase
 
 alt students is empty
-    ListCommand -> CommandResult : new CommandResult("No students found.")
+    ListCommand -->> App : commandResult("No students found.")
 else students present
     loop for each student
         ListCommand -> Student : toString()
-        Student --> ListCommand : studentString
+        activate Student
+        Student -->> ListCommand : studentString
+        deactivate Student
     end
-    ListCommand -> CommandResult : new CommandResult(formattedList)
+    ListCommand -->> App : commandResult(formattedList)
 end
+deactivate ListCommand
 
-CommandResult --> ListCommand : result
-ListCommand --> App : result
 App -> Ui : show(result.getMessage())
-Ui --> User : display student list
+activate Ui
+Ui -->> User : display student list
+deactivate Ui
+deactivate App
 @enduml

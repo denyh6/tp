@@ -2,37 +2,72 @@
 skinparam style strictuml
 actor User
 
+participant ":App" as App
+participant ":Parser" as Parser
+participant ":AddCommand" as AddCommand
+participant ":StudentDatabase" as StudentDatabase
+participant ":Student" as Student
+participant ":Module" as Module
+participant ":Storage" as Storage
+participant ":Ui" as Ui
+
 User -> App : enter "add 1 CS2113/A"
+activate App
 App -> Parser : parse(input)
+activate Parser
 Parser -> Parser : parseAdd("1 CS2113/A")
+activate Parser
+deactivate Parser
 Parser -> Parser : validateModuleCode("CS2113")
+activate Parser
+deactivate Parser
 Parser -> Parser : validateGrade("A")
-Parser -> AddCommand : new AddCommand(1, "CS2113", A, null)
-AddCommand --> Parser : addCommand
-Parser --> App : addCommand
+activate Parser
+deactivate Parser
+Parser -> AddCommand ** : create(1, "CS2113", A, null)
+activate AddCommand
+AddCommand -->> Parser
+deactivate AddCommand
+Parser -->> App : addCommand
+deactivate Parser
 App -> AddCommand : execute(db, storage)
+activate AddCommand
 
 alt invalid index
-    AddCommand -> CommandResult : new CommandResult("Invalid student index")
-    CommandResult --> App : result
+    AddCommand -->> App : commandResult("Invalid student index")
 else valid index
     AddCommand -> StudentDatabase : getStudent(0)
-    StudentDatabase --> AddCommand : student
+    activate StudentDatabase
+    StudentDatabase -->> AddCommand : student
+    deactivate StudentDatabase
 
     alt credits provided
-        AddCommand -> Module : new Module("CS2113", A, credits)
+        AddCommand -> Module ** : create("CS2113", A, credits)
+        activate Module
+        Module -->> AddCommand
+        deactivate Module
     else default credits
-        AddCommand -> Module : new Module("CS2113", A)
+        AddCommand -> Module ** : create("CS2113", A)
+        activate Module
+        Module -->> AddCommand
+        deactivate Module
     end
 
-    Module --> AddCommand : module
     AddCommand -> Student : addModule(module)
+    activate Student
+    Student -->> AddCommand
+    deactivate Student
     AddCommand -> Storage : saveStudentList(db)
-    AddCommand -> CommandResult : new CommandResult("Added module CS2113 (A) to Alice")
-    CommandResult --> AddCommand : result
-    AddCommand --> App : result
+    activate Storage
+    Storage -->> AddCommand
+    deactivate Storage
+    AddCommand -->> App : commandResult
 end
+deactivate AddCommand
 
 App -> Ui : show(result.getMessage())
-Ui --> User : display confirmation
+activate Ui
+Ui -->> User : display confirmation
+deactivate Ui
+deactivate App
 @enduml
