@@ -1954,7 +1954,7 @@ Here are the matching students in your list:
 1. Alice Updated, CS2113: A
 ----------------------------------------------------------------------------------------------------
 > ----------------------------------------------------------------------------------------------------
-Error: Cannot search by both course and module at the same time.
+Error: Cannot search by multiple categories at the same time.
 ----------------------------------------------------------------------------------------------------
 > ----------------------------------------------------------------------------------------------------
 Error: I'm sorry, I think you meant to use the find function? The search function only works if you input a valid prefix (e.g., c/CS or m/CS2113).

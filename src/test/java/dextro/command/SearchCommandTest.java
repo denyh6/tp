@@ -85,10 +85,9 @@ public class SearchCommandTest {
         SearchCommand command = new SearchCommand(null, "CS", null);
         CommandResult result = command.execute(db);
 
-        String expectedOutput = """
-                1. John Doe, CS2113: A
-                1. John Doe, CS2040: B+
-                2. Jane Smith, CS2113: B""";
+        String expectedOutput = "1. John Doe, CS2113: A\n" +
+                "1. John Doe, CS2040: B+\n" +
+                "2. Jane Smith, CS2113: B";
         assertEquals(expectedOutput, result.getMessage());
     }
 
@@ -124,9 +123,8 @@ public class SearchCommandTest {
         SearchCommand command = new SearchCommand(null, null, "2");
         CommandResult result = command.execute(db);
 
-        String expectedOutput = """
-                1. John Doe, 81234567
-                2. Jane Smith, 98765432""";
+        String expectedOutput = "1. John Doe, 81234567\n" +
+                "2. Jane Smith, 98765432";
         assertEquals(expectedOutput, result.getMessage());
     }
 
