@@ -233,8 +233,10 @@ public class Parser {
         String phone = tokenizer.getValue("p/");
 
 
-        if (course != null && module != null && phone != null) {
-            throw new ParseException("Cannot search by both course and module at the same time.");
+        if ((course != null && module != null) ||
+                (course != null && phone != null) ||
+                (module != null && phone != null)) {
+            throw new ParseException("Cannot search by multiple categories at the same time.");
         }
 
         if (course != null) {
