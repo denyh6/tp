@@ -326,4 +326,21 @@ class StatusCommandTest {
         assertTrue(message.contains("Lowest Grade: A"));
         // S/U grades should not affect highest/lowest grade statistics
     }
+
+    @Test
+    void execute_aPlusAndA_aPlusComesFirst() throws CommandException {
+        student1.addModule(new Module("CS2113", Grade.A));
+        student1.addModule(new Module("CS2101", Grade.A_PLUS));
+
+        StatusCommand cmd = new StatusCommand(1);
+        CommandResult result = cmd.execute(db, storage);
+
+        String message = result.getMessage();
+        // Debug: print the actual message
+        System.out.println("DEBUG MESSAGE:\n" + message);
+
+        // A+ must appear before A in the distribution
+        assertTrue(message.contains("Grade Distribution: 1 A+, 1 A"),
+            "Expected 'Grade Distribution: 1 A+, 1 A' but got: " + message);
+    }
 }

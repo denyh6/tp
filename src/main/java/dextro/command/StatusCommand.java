@@ -132,10 +132,23 @@ public class StatusCommand implements Command {
             }
         }
 
-        // Display grade distribution
+        // Display grade distribution (sorted by grade from highest to lowest)
         stats.append("\n  Grade Distribution: ");
         boolean first = true;
-        for (Map.Entry<Grade, Integer> entry : gradeCount.entrySet()) {
+        List<Map.Entry<Grade, Integer>> sortedGrades = gradeCount.entrySet().stream()
+                .sorted((e1, e2) -> {
+                    // First sort by CAP (descending)
+                    int capCompare = Double.compare(e2.getKey().getCap(), e1.getKey().getCap());
+                    if (capCompare != 0) {
+                        return capCompare;
+                    }
+                    // If CAP is equal (e.g., A+ and A both 5.0), sort by enum ordinal
+                    // This ensures A+ comes before A
+                    return Integer.compare(e1.getKey().ordinal(), e2.getKey().ordinal());
+                })
+                .collect(Collectors.toList());
+
+        for (Map.Entry<Grade, Integer> entry : sortedGrades) {
             if (!first) {
                 stats.append(", ");
             }
