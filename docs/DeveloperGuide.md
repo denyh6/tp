@@ -7,10 +7,9 @@ SE-EDU Addressbook 3 Developer Guide: https://se-education.org/addressbook-level
 
 ### Design:
 
+Below is a diagram showing the high level design of Dextro.
 
 ![ArchitectureDiagram](images/ArchitectureDiagram.png)
-
-The **Architecture Diagram** above explains the high-level design of the application.
 
 **Arrow notation:**
 - **Solid arrows (`-->`)** represent structural dependencies (one component uses or depends on another).
@@ -26,11 +25,10 @@ The bulk of the app's work is done by the following five components:
 
 - `UI` : Handles all console input and output.
 - `App` : Orchestrates the main run loop, coordinating all other components.
-- `Parser` : Interprets raw user input into executable `Command` objects.
+- `Logic` : Contains the `Parser`, and the `Commands` packages. Parser interprets raw user input into executable `Command` objects.
 - `Model` : Holds the student data in memory (`StudentDatabase`, `Student`, `Module`, `Grade`).
 - `Storage` : Reads data from, and writes data to, the hard disk.
-
-`Config` holds application-wide constants (command keywords) used across components.
+- `Config` holds application-wide constants (command keywords) used across components.
 
 **How the architecture components interact with each other**
 
@@ -70,14 +68,15 @@ The `App` component:
 
 ---
 
-#### Parser Component
+#### Logic Component
 
-The `Parser` component is responsible for interpreting raw user input into executable `Command` objects. It splits input into a command keyword and arguments, delegates argument tokenisation to `ArgumentTokenizer`, validates field values, and constructs the appropriate `Command`.
+Within the Logic component, `Parser` is responsible for interpreting raw user input into executable `Command` objects. It splits input into a command keyword and arguments, delegates argument tokenisation to `ArgumentTokenizer`, validates field values, and constructs the appropriate `Command`.
 
 ![ParserClassDiagram](images/ParserClassDiagram.png)
 
-The `Parser` component:
+`Parser`:
 - uses `ArgumentTokenizer` to tokenise argument strings into key-value maps for commands that take named fields (e.g. `n/`, `p/`, `e/`).
+- uses `Validator` and `Normalizer` to ensure fields used by commands will not cause unexpected behaviour.
 - uses constants from `Config` in a switch expression to route the command keyword to the correct private `parseX()` method.
 - holds a reference to `CommandHistory` (injected by `App`) which it passes into `UndoCommand`.
 - throws `ParseException` when the input is malformed or a field fails validation.
@@ -124,6 +123,9 @@ The following classes are used across multiple components:
 - `Config` — `final` utility class with only static String constants for command keywords (e.g. `CMD_CREATE`, `CMD_DELETE`), referenced by `Parser`.
  
 ---
+
+
+
 
 ### Implementation: Kai Jie
 

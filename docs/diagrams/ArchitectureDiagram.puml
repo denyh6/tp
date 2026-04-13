@@ -1,47 +1,31 @@
 @startuml ArchitectureDiagram
-skinparam style strictuml
-skinparam defaultFontSize 13
+
 skinparam componentStyle rectangle
+skinparam defaultFontSize 13
+skinparam ArrowThickness 1.5
 
-skinparam component {
-    BorderColor #444444
-    BackgroundColor #FFFFFF
-    FontStyle bold
-}
-
-skinparam rectangle {
-    BorderColor #444444
-    BackgroundColor #FFFFFF
-}
 
 actor User
 
-component [UI] as UI
-component [App] as App
-component [Parser] as Parser
-component [Model] as Model
-component [Storage] as Storage
 
-rectangle "  Main  " as Main
+[Commons\n(Config · Exceptions)] <<Commons>> as Commons
 
-User --> UI : uses
+database "DextroStudentList.txt" as DataFile
 
-Main ..> UI      : creates
-Main ..> Parser  : creates
-Main ..> Storage : creates
-Main ..> Model   : creates
-Main ..> App     : creates & runs
+User      ..>  [UI]      : input / output
 
-App --> UI      : uses
-App --> Parser  : uses
-App --> Model   : uses
-App --> Storage : uses
-Parser ..> Model : creates Commands
-Storage --> Model : uses
+[UI]      -->  [Logic]  : raw input
+[Logic]  -->  [Model]   : reads / mutates
+[Logic]  -->  [Storage] : saves
+[Model]   -->  [UI]      : result
 
-note right of Storage
-  Reads/writes
-  DextroStudentList.txt
-end note
+[Main]    ..>  [UI]      : creates
+[Main]    -->  [Model]   : creates & loads
+[Main]    ..>  [Storage] : creates
+
+[Storage] ..>  DataFile  : reads / writes
+
+[UI]      -->  Commons   : uses
+[Logic]  -->  Commons   : uses
 
 @enduml
