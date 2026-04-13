@@ -107,4 +107,35 @@ public class SearchCommandTest {
         assertThrows(CommandException.class, () -> command.undo(db));
         assertFalse(command.isUndoable());
     }
+
+    @Test
+    public void execute_searchByPhoneMatch_success() {
+        // Search for course containing "Science" using c/ prefix
+        SearchCommand command = new SearchCommand(null, null, "812");
+        CommandResult result = command.execute(db);
+
+        String expectedOutput = "1. John Doe, 81234567";
+        assertEquals(expectedOutput, result.getMessage());
+    }
+
+    @Test
+    public void execute_searchByPhoneMultipleMatches_success() {
+        // Search for "2", which should match both 81234567 for John and 98765432 for Jane
+        SearchCommand command = new SearchCommand(null, null, "2");
+        CommandResult result = command.execute(db);
+
+        String expectedOutput = """
+                1. John Doe, 81234567
+                2. Jane Smith, 98765432""";
+        assertEquals(expectedOutput, result.getMessage());
+    }
+
+    @Test
+    public void execute_searchByPhoneNoMatch_showsNotFound() {
+        SearchCommand command = new SearchCommand(null, null, "000");
+        CommandResult result = command.execute(db);
+
+        assertEquals("No matching students found.", result.getMessage());
+    }
+
 }
