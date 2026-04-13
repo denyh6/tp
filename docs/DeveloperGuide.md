@@ -350,11 +350,11 @@ The class diagram shows the relationship between `EditCommand` and other compone
 
 The sequence diagram illustrates the execution flow:
 1. User executes the edit command with attribute flags(e.g n/ for name and a/ for address)
-2. `Parser` class parse user input and determine which eactly which record is of concern and which attribute needs to be edited based on the flags
+2. `Parser` class parse user input and determine which exactly which record is of concern and which attribute needs to be edited based on the flags
 3. `EditCommand` class constructs an object with all attributes attach to it.
 4. The exact `Student` object is extracted out of `StudentDatabase`
 5. The `Student` object is then rebuilt with updated attributes.
-6. If module need to updated, `EditCommand` will search through the list of modules in `Student`. If Module does not exists, it will add the module in the `Student`.
+6. If module need to updated, `EditCommand` will search through the list of modules in `Student`. If Module does not exist, it will add the module in the `Student`.
 7. `saveStudentList()` is called to save all updates in the database.
 
 #### Find Command
@@ -450,13 +450,13 @@ The target user is an Administrative Staff member (Admin) at the National Univer
 
 ### Value proposition
 
-Student Records information may be stored in a fragemented fashion, with academic history in one system and progress tracking (GPA, Module Code) in another. The Student Record Data Management System (SRDMS) provides a streamlined, keyboard-centric workflow for maintaining student databases. By using a CLI-based approach, it enables admins to perform batch-like updates and quick searches significantly faster than traditional spreadsheet or form-based systems.
+Student Records information may be stored in a fragmented fashion, with academic history in one system and progress tracking (GPA, Module Code) in another. The Student Record Data Management System (SRDMS) provides a streamlined, keyboard-centric workflow for maintaining student databases. By using a CLI-based approach, it enables admins to perform batch-like updates and quick searches significantly faster than traditional spreadsheet or form-based systems.
 
 ## User Stories
 
 | Version | As a ... | I want to ...                            | So that I can ...                                                       |
 |---------|----------|------------------------------------------|-------------------------------------------------------------------------|
-| v1.0    | Admin    | create a new student record              | add new enrollees to the system record system.                               |
+| v1.0    | Admin    | create a new student record              | add new enrollees to the system record system.                          |
 | v1.0    | Admin    | list all students                        | see a high-level overview of the current student population.            |
 | v1.0    | Admin    | delete a student entry                   | remove records of students who have withdrawn or graduated.             |
 | v2.0    | Admin    | edit student details (name, email, etc.) | ensure the database remains accurate as student information changes.    |
@@ -472,7 +472,7 @@ Non-functional requirements:
 - Usability: A new user may learn the commands in around 10 minutes of understanding the User Guide
 - Reliability: If the program crashes, data up to before the latest command was given will be
 saved in the DextroStudentList.txt file
-- Portability: Program will work in Windows, MacOS, and Linux environments
+- Portability: Program will work in Windows, macOS, and Linux environments
 - Maintainability: Code follows quality standards taught and uses OOP design, with extracted classes
 like Command and Object classes
 

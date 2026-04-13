@@ -144,11 +144,11 @@ Here are the matching students in your list:
 
 **Syntax:**
 ```
-search [c/COURSE] [m/CODE/GRADE]
+search [c/COURSE] [m/CODE/GRADE] [p/PHONE]
 ```
 Only one field can be provided. Repeated fields not allowed.
 
-Prefixes must be separated from text before with a space.
+Prefix for specific field must be separated from command text with a space.
 
 ---
 
