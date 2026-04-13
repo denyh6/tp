@@ -1,0 +1,88 @@
+@startuml SearchCommand_Sequence
+
+actor User
+participant ":SearchCommand" as SC
+participant "db:StudentDatabase" as DB
+participant "student:Student" as S
+participant "m:Module" as M
+participant "result:CommandResult" as CR
+
+User -> SC : execute(db, storage)
+activate SC
+
+SC -> DB : getAllStudents()
+activate DB
+DB --> SC : List<Student> students
+deactivate DB
+
+loop for each Student in students
+
+    alt course != null
+        SC -> S : getCourse()
+        activate S
+        S --> SC : studentCourse
+        deactivate S
+
+        opt studentCourse != null && contains course
+            SC -> S : getName()
+            activate S
+            S --> SC : name
+            deactivate S
+        end
+
+    else moduleCode != null
+        SC -> S : getModules()
+        activate S
+        S --> SC : List<Module>
+        deactivate S
+
+        loop for each Module in student
+            SC -> M : getCode()
+            activate M
+            M --> SC : code
+            deactivate M
+
+            opt code contains moduleCode
+                SC -> S : getName()
+                activate S
+                S --> SC : name
+                deactivate S
+
+                SC -> M : getGrade()
+                activate M
+                M --> SC : grade
+                deactivate M
+            end
+        end
+
+    else phone != null
+        SC -> S : getPhone()
+        activate S
+        S --> SC : studentPhone
+        deactivate S
+
+        opt studentPhone != null && contains phone
+            SC -> S : getName()
+            activate S
+            S --> SC : name
+            deactivate S
+        end
+    end
+end
+
+alt no matches found
+    SC -> CR : new CommandResult("No matching students found.")
+    activate CR
+    CR --> SC : result
+    deactivate CR
+else matches found
+    SC -> CR : new CommandResult(sb.toString().trim(), false)
+    activate CR
+    CR --> SC : result
+    deactivate CR
+end
+
+SC --> User : CommandResult
+deactivate SC
+
+@enduml

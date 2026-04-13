@@ -1,0 +1,48 @@
+@startuml StorageClassDiagram
+skinparam classAttributeIconSize 0
+skinparam style strictuml
+
+class Storage {
+    + DEFAULT_STORAGE_FOLDERPATH: String
+    + DEFAULT_STORAGE_FILEPATH: String
+    + filePath: String
+    + Storage(String): void
+    + saveStudentList(StudentDatabase): void
+    + loadStudentList(): ArrayList<Student>
+    - decodeLineToStudent(String): Student
+    - parseModules(String): List<Module>
+    - nullOrTrimmed(String): String
+    - isValidPath(String): boolean
+}
+
+class StudentDatabase {
+    + getAllStudents(): List<Student>
+    + addStudent(Student): void
+}
+
+class Student {
+    - name: String
+    - phone: String
+    - email: String
+    - course: String
+    - modules: List<Module>
+    + addModule(Module): void
+    + toString(): String
+}
+
+class Module {
+    - code: String
+    - grade: Grade
+    - credits: int
+    + Module(String, Grade)
+    + Module(String, Grade, int)
+    + toString(): String
+}
+
+Storage --> StudentDatabase       : reads / writes
+Storage ..> Student               : creates via Student.Builder
+Storage ..> Module                : creates
+StudentDatabase o--> Student      : contains
+Student o--> Module               : contains              : has
+
+@enduml

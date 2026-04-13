@@ -101,6 +101,8 @@ The `Model` component does not depend on `Storage` or `Parser` — it represents
 
 The `Storage` component handles reading from and writing to the flat-file database at `./data/DextroStudentList.txt`.
 
+![StorageClassDiagram](images/StorageClassDiagram.png)
+
 The `Storage` component:
 - saves the full `StudentDatabase` to disk after every mutating command, serialising each `Student` and its `Module` list as a delimited string.
 - loads the student list at startup, parsing each line back into `Student` and `Module` objects. If the file or directory does not exist, it creates them and returns an empty list.
@@ -439,6 +441,56 @@ The sequence diagram illustrates the execution flow:
 - `SearchCommand.execute()` is called with the `StudentDatabase` and `Storage`
 - The command retrieves relevant student records from the `StudentDatabase` based on the specified search criteria
 - A `CommandResult` is returned containing the search results based on the specified search criteria
+
+---
+
+### Implementation: Deny
+
+#### Search Command with phone number
+
+The `SearchCommand` allows users to search for students using certain categories, like their phone number.
+
+##### Class Diagram
+
+![SearchCommandPhoneClassDiagram](images/SearchCommandClassPhone.png)
+
+The class diagram shows the relationship between `SearchCommand` and other components:
+- `SearchCommand` implements the `Command` interface
+- `SearchCommand` references `Storage` and `StudentDatabase` as per the Command interface.
+- It interacts with `StudentDatabase` to retrieve relevant student records based on the specified search criteria
+- Although `Storage` is not used in execute method under `SearchCommand`, the `Command` interface requires it. 
+Thus, the method signature of SearchCommand.execute() must match that of `Command`.
+- All methods listed in `Command` is implemented in `SearchCommand` class
+as there is no further child class from `SearchCommand`.
+- Returns a `CommandResult` containing the search results based on the specified search criteria 
+(i.e. possible substring of student phone number)
+
+##### Sequence Diagram
+
+![SearchCommandPhoneSequence](images/SearchCommandPhoneSequence.png)
+
+The sequence diagram illustrates the execution flow:
+- User executes the search command with specified search criteria (in this case, students whose phone number contain 
+the given substring)
+- `Parser` class parses user input and determines the command (search) and the search criteria
+- `SearchCommand.execute()` is called with the `StudentDatabase` and `Storage`
+- The command retrieves relevant student records from the `StudentDatabase` based on the specified search criteria
+- A `CommandResult` is returned containing the search results based on the specified search criteria
+
+#### Storage
+
+Storage manages saving changes to the StudentDatabase through the use of the DextroStudentList.txt file.
+The StudentDatabase is saved whenever the list is altered in any way. If the program is run again, it will
+automatically load the saved task in the txt file, extracting from text to a StudentDatabase.
+
+##### Class Diagram
+
+![StorageClassDiagram](images/StorageClassDiagram.png)
+The class diagram shows the relationship between `Storage` and other components:
+- `Storage` references `StudentDatabase` to retrieve relevant student records when saving the StudentDatabase 
+in the txt file via toString(), dependent on the user command (if the StudentDatabase is altered).
+- `Storage` interacts with `Student` to create each student parsed from the txt file.
+- `Storage` also adds each module and grade associated with the created student previously saved in the txt file.
 
 ## Product scope
 ### Target user profile

@@ -1,0 +1,49 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam style strictuml
+
+interface Command {
+  + execute(db: StudentDatabase): CommandResult
+  + execute(db: StudentDatabase, storage: Storage): CommandResult
+  + undo(db: StudentDatabase): CommandResult
+  + undo(db: StudentDatabase, storage: Storage): CommandResult
+  + isUndoable(): boolean
+}
+
+class SearchCommand implements Command {
+  - course: String
+  - moduleCode: String
+  - phone: String
+  + SearchCommand(course: String, moduleCode: String, phone: String)
+  + execute(db: StudentDatabase): CommandResult
+  + execute(db: StudentDatabase, storage: Storage): CommandResult
+  + undo(db: StudentDatabase): CommandResult
+  + undo(db: StudentDatabase, storage: Storage): CommandResult
+  + isUndoable(): boolean
+}
+
+class StudentDatabase {
+  + getAllStudents(): List<Student>
+}
+
+class Storage {
+  - filePath: String
+  + Storage(filePath: String)
+}
+
+class CommandResult {
+  + CommandResult(message: String)
+}
+
+class Student {
+  + getName(): String
+  + getPhone(): String
+  + getCourse(): String
+  + getModules(): List<Module>
+}
+
+SearchCommand    ..>   CommandResult   : creates
+SearchCommand    ..>   StudentDatabase : uses
+SearchCommand    ..>   Storage         : uses
+StudentDatabase  "1" o-- "*" Student   : contains
+@enduml
