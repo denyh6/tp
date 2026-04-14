@@ -210,7 +210,7 @@ When `execute(db, storage)` is called:
 When `undo(db, storage)` is called:
 - Throws `CommandException` if `createdIndex == -1` (command was never executed).
 - Throws `CommandException` if `createdIndex >= db.getStudentCount()` (student no longer exists at that index).
-- Otherwise calls `db.removeStudent(createdIndex)` to reverse the creation.
+- Otherwise, calls `db.removeStudent(createdIndex)` to reverse the creation.
 
 ---
 
@@ -563,20 +563,12 @@ the given substring)
 - The command retrieves relevant student records from the `StudentDatabase` based on the specified search criteria
 - A `CommandResult` is returned containing the search results based on the specified search criteria
 
-#### Storage
+#### Storage (As mentioned above)
 
 Storage manages saving changes to the StudentDatabase through the use of the DextroStudentList.txt file.
 The StudentDatabase is saved whenever the list is altered in any way. If the program is run again, it will
 automatically load the saved task in the txt file, extracting from text to a StudentDatabase.
 
-##### Class Diagram
-
-![StorageClassDiagram](images/StorageClassDiagram.png)
-The class diagram shows the relationship between `Storage` and other components:
-- `Storage` references `StudentDatabase` to retrieve relevant student records when saving the StudentDatabase 
-in the txt file via toString(), dependent on the user command (if the StudentDatabase is altered).
-- `Storage` interacts with `Student` to create each student parsed from the txt file.
-- `Storage` also adds each module and grade associated with the created student previously saved in the txt file.
 
 ## Product scope
 ### Target user profile
@@ -615,10 +607,164 @@ saved in the DextroStudentList.txt file
 like Command and Object classes
 
 
-## Glossary
+--------------------------------------------------------------------------------------------------------------------
 
-* *glossary item* - Definition
+## **Instructions for manual testing**
 
-## Instructions for manual testing
+Given below are instructions to test the app manually.
 
-{Give instructions on how to do a manual product testing e.g., how to load sample data to be used for testing}
+**Note:** These instructions only provide a starting point for testers to work on;
+testers are expected to do more *exploratory* testing.
+
+
+### Launch and shutdown
+
+1. Initial launch (similar to instructions in UserGuide)
+
+   1. Download the jar file and copy into an empty folder.
+   2. Open a command terminal, cd into the folder you put the jar file in.
+   3. Use `java -jar dextro.jar` to run the program.
+
+2. Shutdown
+   1. Exit: `exit`
+   2. Expected: Program exits and data is saved into DextroStudentList.txt file in data folder.
+
+### Creating a student
+
+1. Creating a student using all fields
+
+   1. Test case: `create n/John Doe p/87654321 e/john@hmail.com a/20 Orchard Road #23-11 c/Computer Science`  
+   2. Expected: A new indexed student with the corresponding details, is created and added to the current StudentDatabase. 
+
+2. Creating a student using some fields
+
+   1. Test case: `create n/Jane c/Computer Engineering p/98762345`  
+   2. Expected: A new indexed student with the corresponding details and N.A for the missing details, is created 
+      and added to the current StudentDatabase.
+
+3. Creating a student using only name
+
+   1. Test case: `create n/Jack`
+   2. Expected: A new indexed student with only the name recorded and N.A for all other fields is created and added to 
+      the current StudentDatabase.
+
+4. Creating a student without a name
+
+   1. Test case: `create p/91234567 c/Computer Science`
+   2. Expected: No student is created. Error message is shown that name is compulsory for create command.
+
+### Deleting a student
+
+1. Prerequisites: List all student(s) using the `list` command to obtain index of students.
+
+2. Deleting a student with known index
+   1. Test case: `delete 3`
+   2. Expected: Third contact is deleted from the list. Details of the deleted contact shown in the status message.
+
+3. Deleting a student with invalid index (for e.g. 0, a or symbols)
+   1. Test case: `delete 0`
+   2. Expected: No student is deleted. Error details shown in the status message. Student list remains the same.
+
+4. Other incorrect delete commands to try
+   1. Test cases: `delete`, `delete x`, `...` (where x is larger than the list size)
+   2. Expected: Error details shown, similar to previous.
+
+### Editing a student
+
+1. Prerequisites: List all student(s) using `list` command to obtain index of student, and current details.
+
+2. Editing one detail category of a student with known index 
+   1. Test case: `edit 1 p/98761234`
+   2. Expected: Phone number associated to student of index 1 in the list is edited to 98761234.
+3. Editing multiple detail categories of a student with known index
+   1. Test case: `edit 2 n/Jane Tan e/jane123@hmail.com`
+   2. Expected: Name and email associated to student of index 2 in the list is edited to Jane Tan and jane123@hmail.com
+   respectively.
+4. Editing a student with invalid index (for e.g. 0, a or symbols)
+   1. Test case: `edit 0 n/John Tan`
+   2. Expected: No student is edited. Error details shown in the status message. Student list remains the same.
+5. Other incorrect edit commands to try
+   1. Test cases: `edit`, `edit x`, `...` (where x is larger than the list size)
+   2. Expected: Error details shown, similar to previous.
+
+### List all students
+
+1. Listing an empty list
+   1. Test case: `list`
+   2. Expected: Message of no students found in the list is shown.
+2. Listing a non-empty list
+   1. Test case: `list`
+   2. Expected: Indexed list of all students and corresponding details are displayed.
+
+### Find a keyword in all student categories
+
+1. Finding a keyword
+   1. Test case: `find Tan`
+   2. Expected: List of all students whose details contain `Tan` is displayed, along with their corresponding details.
+2. Finding missing details
+   1. Test case: `find n.a`
+   2. Expected: List of all students with missing details, i.e. N.A recorded in those categories, along with their
+   corresponding details.
+
+### Search a keyword in specific student categories
+
+1. Searching for a specific category containing a keyword
+   1. Test case: `search c/Computer`
+   2. Expected: List of all students whose course category contains the substring "Computer".
+2. Searching for multiple categories containing its respective keyword
+   1. Test case: `search c/Computer p/9876`
+   2. Expected: List of all students whose course category contains the substring "Computer" and phone number that
+   contains the substring "9876".
+3. Searching for a category that does not contain the keyword
+   1. Test case: `search m/CS2113X`
+   2. Expected: Error message will be shown. No matching students found.
+
+### Status of a student
+
+1. Status of a student with known index
+   1. Test case: `status 1`
+   2. Expected: Summary of student of index 1 in the list is displayed, including details like GPA, degree completion
+   progress and sorted modules.
+2. Status of a student with invalid index
+   1. Test case: `status 0`
+   2. Expected: Error details shown in the status message.
+3. Other incorrect status commands to try
+   1. Test cases: `status`, `status x`, `...` (where x is larger than the list size)
+   2. Expected: Error details shown, similar to previous.
+
+### Undo a command
+
+1. **note:** `undo` will undo the latest undoable command (Refer to UserGuide). If the latest command was a
+non-undoable command, the command executed before that will be undone instead.
+
+2. Undo after an undoable command
+   1. Test case: `undo`
+   2. Expected: Previous command will be undone. Details of the command undone is displayed. For e.g., previous command
+   was `delete 2`, deleted student will be added to list, at their previous corresponding index (in this case, index 2).
+3. Undo after a non-undoable command
+   1. Test case: 'undo'
+   2. Expected: Latest undoable command will be undone. Details of the command undone is displayed. For e.g., `delete 2`
+   was executed, then `list`, followed by `undo`. `delete 2` command will be undone, instead of `list`.
+
+### Sorting of list of students
+
+1. **note:** `sort` displays a temporary sorted list, not permanently editing the order of the current list.
+
+2. Sort by a category
+   1. Test case: `sort name`
+   2. Expected: A temporary list is displayed with all students in the current list sorted by name, alphabetically.
+3. Sort by an invalid category
+   1. Test case: `sort height`
+   2. Expected: Error details shown in the status message.
+
+### Saving data
+
+1. Dealing with missing DextroStudentList.txt file
+   1. To simulate missing file, exit program, delete DextroStudentList.txt file (found in the data folder).
+   2. Expected: Program will run with an empty student list. Program recognises missing txt file and creates a new
+   DextroStudentList.txt file in the data folder.
+
+2. Dealing with missing data folder
+   1. To simulate missing folder, exit program, delete data folder.
+   2. Expected: Program will run with an empty student list. Program recognises missing data folder and creates a new
+      data folder in the same location as jar file. A new DextroStudentList.txt file is also created in the data folder.

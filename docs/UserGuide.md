@@ -103,7 +103,7 @@ The above command does not trigger an error for duplicate prefixes as the name i
 ```
 list
 ```
-Example output:
+Example:
 ```
 > list
 ----------------------------------------------------------------------------------------------------
@@ -146,7 +146,8 @@ Here are the matching students in your list:
 3. John doe/91234678/email@gmail.com/bukit batok/N.A.
 ----------------------------------------------------------------------------------------------------
 ```
-User can use command: find n.a to query all records of null/missing value for manual validation or filtering if required.
+User can use command: `find n.a` to query all records of null/missing value for manual validation or filtering if required.
+
 ---
 
 ### `search`
@@ -534,9 +535,9 @@ find John
 search c/Computer Science
 ```
 
-* Search students by module:
+* Search students by phone and module:
 ```
-search m/CS2113
+> search p/9876 m/CS
 ```
 
 * Edit a student’s details:
