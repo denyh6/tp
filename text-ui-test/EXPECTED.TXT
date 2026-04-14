@@ -102,10 +102,10 @@ Here are the matching students in your list:
 4. Mary Ann/91234567/mary@email.com/10 Downing St/Data Science
 ----------------------------------------------------------------------------------------------------
 > ----------------------------------------------------------------------------------------------------
-1. John Doe, Computer Science
+1. John Doe, Course: Computer Science
 ----------------------------------------------------------------------------------------------------
 > ----------------------------------------------------------------------------------------------------
-1. John Doe, CS2113: A
+1. John Doe, Modules: [CS2113: A]
 ----------------------------------------------------------------------------------------------------
 > ----------------------------------------------------------------------------------------------------
 Student updated successfully.
@@ -141,10 +141,10 @@ Alan Lim/92345678/alan@yahoo.com/789 Tampines St 21 #08-90/Information Systems
 ----------------------------------------------------------------------------------------------------
 > ----------------------------------------------------------------------------------------------------
 Temporary list sorted by name:
-1. Bob-Lee/92345679/bob.lee+test@mail.com/Blk 123, Bedok North Rd #01-01/Engineering
+4. Bob-Lee/92345679/bob.lee+test@mail.com/Blk 123, Bedok North Rd #01-01/Engineering
 2. Jane T/97654321/janet@gmail.com/654 Clementi Ave 5 #02-22/Economics
-3. Johnathan Doe/81234567/johnathan@nus.edu.sg/321 Orchard Road #10-01/Data Science
-4. Mary Ann/91234567/mary@email.com/10 Downing St/Data Science
+1. Johnathan Doe/81234567/johnathan@nus.edu.sg/321 Orchard Road #10-01/Data Science
+3. Mary Ann/91234567/mary@email.com/10 Downing St/Data Science
 ----------------------------------------------------------------------------------------------------
 > ----------------------------------------------------------------------------------------------------
 1: Johnathan Doe/81234567/johnathan@nus.edu.sg/321 Orchard Road #10-01/Data Science

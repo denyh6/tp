@@ -1,40 +1,59 @@
 @startuml
 skinparam classAttributeIconSize 0
+skinparam classBackgroundColor White
+skinparam classBorderColor Black
 skinparam style strictuml
 
-interface Command {
-    + execute(db: StudentDatabase, storage: Storage): CommandResult
-    + execute(db: StudentDatabase): CommandResult
-    + undo(db: StudentDatabase): CommandResult
-    + undo(db: StudentDatabase, storage: Storage): CommandResult
-    + isUndoable(): boolean
+interface Command <<interface>> {
+  + execute(db: StudentDatabase, storage: Storage): CommandResult
+  + execute(db: StudentDatabase): CommandResult
+  + undo(db: StudentDatabase): CommandResult
+  + undo(db: StudentDatabase, storage: Storage): CommandResult
+  + isUndoable(): boolean
 }
 
-class SearchCommand implements Command {
-    - course: String
-    - moduleCode: String
-    + SearchCommand(course: String, moduleCode: String)
-    + execute(db: StudentDatabase, storage: Storage): CommandResult
-    + execute(db: StudentDatabase): CommandResult
-    + undo(db: StudentDatabase): CommandResult
-    + undo(db: StudentDatabase, storage: Storage): CommandResult
-    + isUndoable(): boolean
+class SearchCommand {
+  - name: String
+  - phone: String
+  - email: String
+  - address: String
+  - course: String
+  - moduleCode: String
+
+  + SearchCommand(name: String, phone: String, email: String, address: String, course: String, moduleCode: String)
+  + execute(db: StudentDatabase, storage: Storage): CommandResult
+  + execute(db: StudentDatabase): CommandResult
+  + undo(db: StudentDatabase): CommandResult
+  + undo(db: StudentDatabase, storage: Storage): CommandResult
+  + isUndoable(): boolean
+
+  - isStudentMatch(student: Student): boolean
+  - isMatch(studentField: String, query: String): boolean
+  - formatStudentDetails(index: int, student: Student): String
+  - getMatchingModulesString(student: Student): String
+}
+
+' External classes used by SearchCommand
+class CommandResult {
 }
 
 class StudentDatabase {
-    + getAllStudents(): List<Student>
+  + getAllStudents(): List<Student>
 }
 
-class Storage {
-    +save(StudentDatabase): void
+class Student {
+  + getName(): String
+  + getPhone(): String
+  + getEmail(): String
+  + getAddress(): String
+  + getCourse(): String
+  + getModules(): List<Module>
 }
 
-class CommandResult {
-    + CommandResult(feedbackToUser: String, showHelp: boolean)
-    + CommandResult(feedbackToUser: String)
-}
+' Relationships
+Command <|.. SearchCommand : implements
+SearchCommand ..> StudentDatabase : reads from >
+SearchCommand ..> CommandResult : creates >
+SearchCommand ..> Student : evaluates >
 
-SearchCommand ..> StudentDatabase : uses >
-SearchCommand ..> Storage : uses >
-SearchCommand ..> CommandResult : produces >
 @enduml

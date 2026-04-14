@@ -1,0 +1,4 @@
+Johnathan Doe/81234567/johnathan@nus.edu.sg/321 Orchard Road #10-01/Data Science/[MA1511/B+/2]
+Jane T/97654321/janet@gmail.com/654 Clementi Ave 5 #02-22/Economics/[]
+Mary Ann/91234567/mary@email.com/10 Downing St/Data Science/[CS1231/A/4]
+Bob-Lee/92345679/bob.lee+test@mail.com/Blk 123, Bedok North Rd #01-01/Engineering/[EG1311/C/1]

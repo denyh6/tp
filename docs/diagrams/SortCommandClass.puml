@@ -2,16 +2,13 @@
 skinparam classAttributeIconSize 0
 skinparam style strictuml
 
-
 interface Command {
     + execute(db: StudentDatabase, storage: Storage): CommandResult
-    + execute(db: StudentDatabase): CommandResult
-    + undo(db: StudentDatabase): CommandResult
     + undo(db: StudentDatabase, storage: Storage): CommandResult
     + isUndoable(): boolean
 }
 
-class SortCommand implements Command {
+class SortCommand {
     - category: String
     + SortCommand(category: String)
     + execute(db: StudentDatabase): CommandResult
@@ -25,16 +22,23 @@ class StudentDatabase {
     + getAllStudents(): List<Student>
 }
 
-class Storage {
-    +save(StudentDatabase): void
+class Student {
+    + getName(): String
+    + getCourse(): String
+    + calculateCap(): double
+    + getTotalMCs(): int
 }
 
 class CommandResult {
-    + CommandResult(feedbackToUser: String, showHelp: boolean)
-    + CommandResult(feedbackToUser: String)
+    + CommandResult(message: String, isExit: boolean)
 }
 
-SortCommand ..> StudentDatabase : uses >
-SortCommand ..> Storage : uses >
-SortCommand ..> CommandResult : produces >
+class Storage {
+}
+
+Command <|.. SortCommand
+SortCommand ..> StudentDatabase : uses
+SortCommand ..> Storage : ignores
+SortCommand ..> Student : accesses data
+SortCommand ..> CommandResult : produces
 @enduml

@@ -7,6 +7,7 @@ import dextro.command.FindCommand;
 import dextro.command.HelpCommand;
 import dextro.command.ListCommand;
 import dextro.command.SortCommand;
+import dextro.command.SearchCommand;
 import dextro.command.ExitCommand;
 import dextro.command.module.AddCommand;
 import dextro.command.module.RemoveCommand;
@@ -207,17 +208,18 @@ class ParserTest {
 
     @Test
     void parse_searchByCourse_returnsSearchCommand() throws ParseException {
-        parser.parse("search c/CS");
+        assertInstanceOf(SearchCommand.class, parser.parse("search c/CS"));
     }
 
     @Test
     void parse_searchByModule_returnsSearchCommand() throws ParseException {
-        parser.parse("search m/CS2113");
+        assertInstanceOf(SearchCommand.class, parser.parse("search m/CS2113"));
     }
 
     @Test
-    void parse_searchBothPrefixes_throwsParseException() {
-        assertThrows(ParseException.class, () -> parser.parse("search c/CS m/CS2113"));
+    void parse_searchMultipleCategories_returnsSearchCommand() throws ParseException {
+        // Updated: This should now successfully return a SearchCommand instead of throwing an exception
+        assertInstanceOf(SearchCommand.class, parser.parse("search c/CS m/CS2113"));
     }
 
     @Test

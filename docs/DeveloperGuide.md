@@ -500,30 +500,31 @@ The sequence diagram illustrates the execution flow:
 
 ##### Search Command
 
-The `SearchCommand` allows users to search for students using certain categories, such as name, course, and mcs.
+The `SearchCommand` allows users to search for students using any combination of categories: name, phone, email, address, course, and module code. When multiple categories are provided, the command applies an **AND** filter, returning only students who match *all* specified criteria.
 
 ##### Class Diagram
 
 ![SearchCommandClassDiagram](images/SearchCommandClass.png)
 
-The class diagram shows the relationship between `SearchCommand` and other components:
-- `SearchCommand` implements the `Command` interface
-- `SearchCommand` needs to reference of `Storage` and `StudentDatabase`. 
-- It interacts with `StudentDatabase` to retrieve relevant student records based on the specified search criteria
-- Although `Storage` is not used in execute method under `SearchCommand`, the `Command` require it to be there. So the method signature must match `Command`.
-- All methods listed in `Command` is implemented in `SearchCommand` class as there is no further child class from `SearchCommand`.
-- Returns a `CommandResult` containing the search results based on the specified search criteria
+The class diagram shows the internal structure and relationships of the refactored `SearchCommand`:
+* **Implements Interface:** `SearchCommand` implements the `Command` interface, defining the required `execute` and `undo` methods.
+* **Dependencies:** It requires references to `Storage` and `StudentDatabase`. Even though `Storage` is not actively used during execution, the method signature must match the `Command` interface.
+* **State & Fields:** It stores the user's search queries across six isolated string fields (`name`, `phone`, `email`, `address`, `course`, `moduleCode`). 
+* **Encapsulation:** Utilizes private helper methods (`isStudentMatch`, `isMatch`, `formatStudentDetails`, `getMatchingModulesString`) to decouple validation logic from the main execution loop, adhering to the Single Responsibility Principle.
+* **Output:** It evaluates students in the `StudentDatabase` and returns a `CommandResult` containing the formatted matches.
 
 ##### Sequence Diagram
 
-![SearchCommandSequence](images/SearchCommandSequence.png)
+The sequence diagram illustrates the execution flow for multicategory searches:
+* The user executes the search command with one or more search criteria (e.g., `search n/John c/Science`).
+* The `Parser` parses the input, ensures no illegal characters are present, and instantiates the `SearchCommand` with the provided criteria.
+* `SearchCommand.execute(db, storage)` is called.
+* The command retrieves the full list of records via `StudentDatabase.getAllStudents()`.
+* **Iteration & Matching:** For each student, the command calls `isStudentMatch()`, which evaluates the student against all non-null criteria.
+* **Module Evaluation:** If a module code is part of the query, it iterates through the student's `List<Module>` to check for matching prefixes and grades.
+* **Dynamic Formatting:** If the student passes all checks, `formatStudentDetails()` constructs an output string that dynamically appends only the categories the user explicitly searched for.
+* A `CommandResult` containing the aggregated results (or a "No matching students found" message) is returned to the UI.
 
-The sequence diagram illustrates the execution flow:
-- User executes the search command with specified search criteria (e.g., name, course, mcs)
-- `Parser` class parses user input and determines the command (search) and the search criteria
-- `SearchCommand.execute()` is called with the `StudentDatabase` and `Storage`
-- The command retrieves relevant student records from the `StudentDatabase` based on the specified search criteria
-- A `CommandResult` is returned containing the search results based on the specified search criteria
 
 ---
 

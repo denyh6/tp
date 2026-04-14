@@ -150,14 +150,51 @@ User can use command: find n.a to query all records of null/missing value for ma
 ---
 
 ### `search`
-**Description:** Searches students either by a specific field
+**Description:** Searches for students matching **all** the specified criteria. You can search using a single category or combine multiple categories to narrow down your results.
 
 **Syntax:**
+```text
+search [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [c/COURSE] [m/MODULE_CODE]
 ```
-search [c/COURSE] [m/CODE/GRADE] [p/PHONE]
-```
-Only one field can be provided. Repeated fields not allowed.
 
+**Key Rules:**
+* **At least one field** must be provided.
+* **AND Logic:** If multiple fields are provided, only students matching *every* provided field will be returned.
+* **Case-Insensitive:** Searching `n/john` will match "John".
+* **Partial Matching:** Searching `m/CS` will match "CS2113" and "CS2040".
+* **Spacing:** Prefixes must be separated from other text by a space.
+* **Forbidden Characters:** The pipe character (`|`) cannot be used anywhere in the input.
+
+**Example:**
+```
+> search n/John
+--------------------------------------------------------------------------------
+Here are the matching students in your list:
+1. John/87654321/johndoe@u.nus.edu/123 Clementi Road/Computer Science
+--------------------------------------------------------------------------------
+```
+```
+> search c/Science m/CS
+--------------------------------------------------------------------------------
+Here are the matching students in your list:
+1. John/87654321/johndoe@u.nus.edu/123 Clementi Road/Computer Science
+--------------------------------------------------------------------------------
+```
+```
+> search n/Jane p/9876 e/nus.edu
+--------------------------------------------------------------------------------
+Here are the matching students in your list:
+2. Jane/98765432/jane@u.nus.edu/N.A./Information Systems
+--------------------------------------------------------------------------------
+```
+
+**Invalid Example:**
+```
+> search
+--------------------------------------------------------------------------------
+Error: Search query cannot be empty.
+--------------------------------------------------------------------------------
+```
 Prefix for specific field must be separated from command text with a space.
 
 ---
@@ -207,16 +244,111 @@ undo
 ---
 
 ### `sort`
-**Description:** Displays a sorted list of the existing database entries
+
+**Description:** Displays a sorted list of the existing database entries based on a specified category (name, course, cap, or mcs). This generates a temporary list for viewing purposes and does not permanently mutate the database. To help you easily reference students later, the sorted list displays each student's original database index.
 
 **Syntax:**
 ```
 sort [name|course|cap|mcs]
 ```
 
-Displays a temporary list. Does not affect the order of the database entries. 
+**Examples:**
+```
+
+> sort name
+--------------------------------------------------------------------------------
+Temporary list sorted by name:
+3. Alice/N.A./N.A./N.A./CS
+1. Bob/N.A./N.A./N.A./SE
+2. Charlie/N.A./N.A./N.A./IS
+--------------------------------------------------------------------------------
+```
+
+```
+> sort cap
+--------------------------------------------------------------------------------
+Temporary list sorted by cap:
+2. Charlie/N.A./N.A./N.A./IS (CAP: 4.8)
+3. Alice/N.A./N.A./N.A./CS (CAP: 4.2)
+1. Bob/N.A./N.A./N.A./SE (CAP: 3.5)
+--------------------------------------------------------------------------------
+```
+
+```
+> sort
+--------------------------------------------------------------------------------
+Error: Sort category cannot be empty. Usage: sort [name/course/cap/mcs]
+--------------------------------------------------------------------------------
+```
+
+```
+> sort age
+--------------------------------------------------------------------------------
+Error: Invalid category. Available categories: name, course, cap, mcs
+--------------------------------------------------------------------------------
+```
 
 ---
+
+**Categories:**
+* `name`: Alphabetical (A-Z)
+* `course`: Alphabetical (A-Z)
+* `cap`: Numerical Descending (Highest CAP first)
+* `mcs`: Numerical Descending (Highest MCs first)
+
+> **Note:** This command generates a temporary list for viewing purposes only. It does **not** permanently mutate or affect the actual order of the database entries.
+> The indices shown in the sorted list correspond to the students' original positions in the main database, allowing you to easily reference them for subsequent commands.
+
+---
+
+#### Examples of Valid Inputs
+
+**Sorting by Name:**
+```
+sort name
+```
+*Expected Output:*
+```
+Temporary list sorted by name:
+3. Alice/N.A./N.A./N.A./CS
+1. Bob/N.A./N.A./N.A./SE
+2. Charlie/N.A./N.A./N.A./IS
+```
+*(Notice how the indices remain 3, 1, and 2, reflecting their original, unmutated positions in the main database).*
+
+**Sorting by CAP:**
+```
+sort cap
+```
+*Expected Output:*
+```
+Temporary list sorted by cap:
+2. Charlie/N.A./N.A./N.A./IS (CAP: 4.8)
+3. Alice/N.A./N.A./N.A./CS (CAP: 4.2)
+1. Bob/N.A./N.A./N.A./SE (CAP: 3.5)
+```
+
+---
+
+#### Examples of Invalid Inputs
+
+**Missing the sort category:**
+```
+sort
+```
+
+```
+Error: Sort category cannot be empty. Usage: sort [name/course/cap/mcs]
+```
+
+**Using an unsupported category:**
+```
+sort age
+```
+*Expected Output:*
+```
+Error: Invalid category. Available categories: name, course, cap, mcs
+```
 
 
 ### `exit`

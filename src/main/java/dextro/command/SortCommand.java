@@ -36,11 +36,11 @@ public class SortCommand implements Command {
             sortedList.sort(Comparator.comparing(Student::getCourse, String.CASE_INSENSITIVE_ORDER));
             break;
         case "cap":
-            // Sort numerically descending (highest CAP first)
+            // numerically descending (highest CAP first)
             sortedList.sort(Comparator.comparingDouble(Student::calculateCap).reversed());
             break;
         case "mcs":
-            // Sort numerically descending (highest MCs first)
+            // numerically descending (highest MCs first)
             sortedList.sort(Comparator.comparingInt(Student::getTotalMCs).reversed());
             break;
         default:
@@ -48,11 +48,13 @@ public class SortCommand implements Command {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Temporary list sorted by ").append(category).append(":\n");
+        sb.append("Temporary list sorted by ").append(category).append(":").append(System.lineSeparator());
 
-        int index = 1;
         for (Student student : sortedList) {
-            sb.append(index++)
+            // Retrieve the 1-based index from the original, unmutated list
+            int originalIndex = students.indexOf(student) + 1;
+
+            sb.append(originalIndex)
                     .append(". ")
                     .append(student.toString());
 
@@ -62,7 +64,7 @@ public class SortCommand implements Command {
             } else if (category.equals("mcs")) {
                 sb.append(String.format(" (MCs: %d)", student.getTotalMCs()));
             }
-            sb.append("\n");
+            sb.append(System.lineSeparator());
         }
 
         return new CommandResult(sb.toString().trim(), false);
