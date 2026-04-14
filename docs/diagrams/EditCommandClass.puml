@@ -1,4 +1,4 @@
-@startuml EditCommand
+@startuml EditCommandClass
 
 skinparam classAttributeIconSize 0
 skinparam style strictuml
@@ -51,35 +51,6 @@ class "Student.Builder" as StudentBuilder {
   + build(): Student
 }
 
-class Module {
-  - code: String
-  - grade: Grade
-  + getCode(): String
-  + getGrade(): Grade
-}
-
-enum Grade <<enum>>{
-    A_PLUS
-    A
-    A_MINUS
-    B_PLUS
-    B
-    B_MINUS
-    C_PLUS
-    C
-    D_PLUS
-    D
-    F
-    -label: String
-    -cap: double
-    -countsToGpa: boolean
-    -countsToCompletion: boolean
-    +getCap(): double
-    +getCountsToGpa(): boolean
-    +getCountsToCompletion(): boolean
-    +fromString(String): Grade
-    +toString(): String
-}
 
 class Storage {
   + saveStudentList(db: StudentDatabase): void
@@ -97,8 +68,5 @@ EditCommand ..> CommandResult : creates
 EditCommand ..> StudentBuilder : uses
 EditCommand ..> Student : previousStudent
 StudentBuilder ..> Student : creates
-StudentDatabase "1" o-- "0..*" Student : aggregates
-Student "1" o-- "0..*" Module : aggregates
-Module --> Grade : uses
 
 @enduml

@@ -1,4 +1,4 @@
-@startuml FindCommand
+@startuml FindCommandClass
 
 skinparam classAttributeIconSize 0
 skinparam style strictuml
@@ -48,6 +48,5 @@ FindCommand ..> StudentDatabase : uses
 FindCommand ..> Student : uses
 FindCommand ..> Storage : uses
 FindCommand ..> CommandResult : creates
-StudentDatabase "1" o-- "0..*" Student : contains
 
 @enduml

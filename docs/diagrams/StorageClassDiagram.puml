@@ -42,7 +42,7 @@ class Module {
 Storage --> StudentDatabase       : reads / writes
 Storage ..> Student               : creates via Student.Builder
 Storage ..> Module                : creates
-StudentDatabase o--> Student      : contains
-Student o--> Module               : contains              : has
+
+
 
 @enduml

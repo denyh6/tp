@@ -76,6 +76,8 @@ Extracted all field validation logic from `Parser` into a dedicated `Validator` 
   - DeleteCommand
   - ListCommand
 
+Implemented feedback from TA and bug reports in the DG
+
 ---
 
 ### Contributions to team-based tasks

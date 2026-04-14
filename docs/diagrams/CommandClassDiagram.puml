@@ -1,6 +1,7 @@
 @startuml CommandClassDiagram
 skinparam classAttributeIconSize 0
 skinparam style strictuml
+skinparam interfaceFontStyle normal
 
 
 interface Command <<interface>> {

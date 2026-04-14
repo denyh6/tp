@@ -27,12 +27,6 @@ class Storage {
     +saveStudentList(StudentDatabase): void
 }
 
-class Student {
-    +getModules(): List<Module>
-    +removeModule(String): boolean
-    +addModule(Module): void
-    +getName(): String
-}
 
 class Module {
     -code: String
@@ -58,5 +52,4 @@ RemoveCommand ..> Storage : uses
 RemoveCommand ..> CommandResult : creates
 RemoveCommand ..> CommandException : throws
 RemoveCommand --> Module : stores ref
-Student "1" o-- "*" Module : has
 @enduml

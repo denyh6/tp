@@ -32,5 +32,4 @@ class CommandResult {
 Command <|.. ListCommand
 ListCommand ..> StudentDatabase : uses
 ListCommand ..> CommandResult : creates
-StudentDatabase "1" o-- "*" Student : contains
 @enduml
