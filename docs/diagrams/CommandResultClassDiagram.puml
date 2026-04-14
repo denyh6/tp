@@ -2,30 +2,31 @@
 skinparam classAttributeIconSize 0
 skinparam style strictuml
 
-interface Command {
-    +execute(StudentDatabase, Storage): CommandResult
-    +undo(StudentDatabase, Storage): CommandResult
-    +isUndoable(): boolean
+
+interface Command <<interface>> {
+    +execute(db : StudentDatabase, storage : Storage) : CommandResult
+    +undo(db : StudentDatabase, storage : Storage) : CommandResult
+    +isUndoable() : boolean
 }
 
 class CommandResult {
-    -message: String
-    -exit: boolean
-    +CommandResult(String)
-    +CommandResult(String, boolean)
-    +getMessage(): String
-    +shouldExit(): boolean
+    -message : String
+    -exit : boolean
+    -requiresConfirmation : boolean
+    -pendingCommand : Command
+    +CommandResult(message : String)
+    +CommandResult(message : String, exit : boolean)
+    +CommandResult(message : String, pendingCommand : Command)
+    +getMessage() : String
+    +shouldExit() : boolean
+    +requiresConfirmation() : boolean
+    +getPendingCommand() : Command
 }
 
-class App {
-    +run(): void
-}
-
-class Ui {
-    +show(String): void
-}
+class App
 
 Command ..> CommandResult : creates
+CommandResult o--> "0..1" Command : pendingCommand
 App ..> CommandResult : reads
-App --> Ui : uses
+
 @enduml

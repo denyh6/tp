@@ -1,10 +1,14 @@
 @startuml CreateCommandSequence
 skinparam style strictuml
+skinparam maxMessageSize 150
+
 actor User
 
 participant ":App" as App
 participant ":Parser" as Parser
 participant ":ArgumentTokenizer" as ArgumentTokenizer
+participant ":Normalizer" as Normalizer
+participant ":Validator" as Validator
 participant ":CreateCommand" as CreateCommand
 participant ":Student.Builder" as Builder
 participant ":Student" as Student
@@ -12,67 +16,122 @@ participant ":StudentDatabase" as StudentDatabase
 participant ":Storage" as Storage
 participant ":Ui" as Ui
 
-User -> App : enter "create n/Alice p/91234567\ne/alice@u.nus.edu c/CS"
+User -> App : enter "create n/Alice p/91234567 e/alice@u.nus.edu c/CS"
 activate App
+
 App -> Parser : parse(input)
 activate Parser
-Parser -> ArgumentTokenizer ** : create(args, "n/","p/","e/","a/","c/")
+
+Parser -> ArgumentTokenizer ** : new(args, "n/", "p/", "e/", "a/", "c/")
 activate ArgumentTokenizer
-ArgumentTokenizer -->> Parser : tokenMap
+ArgumentTokenizer --> Parser : tokenizer
 deactivate ArgumentTokenizer
-Parser -> Parser : validateName(name)
-activate Parser
-deactivate Parser
-Parser -> Parser : validatePhone(phone)
-activate Parser
-deactivate Parser
-Parser -> Parser : validateEmail(email)
-activate Parser
-deactivate Parser
-Parser -> Parser : validateAddress(address)
-activate Parser
-deactivate Parser
-Parser -> CreateCommand ** : create(name, phone, email, address, course)
+
+Parser -> Normalizer : normalizeName(raw)
+activate Normalizer
+Normalizer --> Parser : name
+deactivate Normalizer
+Parser -> Validator : validateName(name)
+activate Validator
+Validator --> Parser : name
+deactivate Validator
+
+Parser -> Normalizer : normalizePhone(raw)
+activate Normalizer
+Normalizer --> Parser : phone
+deactivate Normalizer
+Parser -> Validator : validatePhone(phone)
+activate Validator
+Validator --> Parser : phone
+deactivate Validator
+
+Parser -> Normalizer : normalizeEmail(raw)
+activate Normalizer
+Normalizer --> Parser : email
+deactivate Normalizer
+Parser -> Validator : validateEmail(email)
+activate Validator
+Validator --> Parser : email
+deactivate Validator
+
+Parser -> Normalizer : normalizeAddress(raw)
+activate Normalizer
+Normalizer --> Parser : address
+deactivate Normalizer
+Parser -> Validator : validateAddress(address)
+activate Validator
+Validator --> Parser : address
+deactivate Validator
+
+Parser -> Normalizer : normalizeCourse(raw)
+activate Normalizer
+Normalizer --> Parser : course
+deactivate Normalizer
+Parser -> Validator : validateCourse(course)
+activate Validator
+Validator --> Parser : course
+deactivate Validator
+
+Parser -> CreateCommand ** : new(name, phone, email, address, course)
 activate CreateCommand
-CreateCommand -->> Parser
+CreateCommand --> Parser : createCommand
 deactivate CreateCommand
-Parser -->> App : createCommand
+
+Parser --> App : createCommand
 deactivate Parser
+
 App -> CreateCommand : execute(db, storage)
 activate CreateCommand
-CreateCommand -> Builder ** : create(name)
+
+CreateCommand -> StudentDatabase : findDuplicateFields(name, phone, email, address)
+activate StudentDatabase
+StudentDatabase --> CreateCommand : conflicts (empty)
+deactivate StudentDatabase
+
+CreateCommand -> Builder ** : new Builder(name)
 activate Builder
+
 Builder -> Builder : phone(phone)
 activate Builder
 deactivate Builder
+
 Builder -> Builder : email(email)
 activate Builder
 deactivate Builder
+
 Builder -> Builder : address(address)
 activate Builder
 deactivate Builder
+
 Builder -> Builder : course(course)
 activate Builder
 deactivate Builder
+
 Builder -> Student ** : build()
 activate Student
-Student -->> Builder
+Student --> Builder : student
 deactivate Student
-Builder -->> CreateCommand : student
+
+Builder --> CreateCommand : student
 deactivate Builder
+
 CreateCommand -> StudentDatabase : addStudent(student)
 activate StudentDatabase
-StudentDatabase -->> CreateCommand
+StudentDatabase --> CreateCommand
 deactivate StudentDatabase
+
 CreateCommand -> Storage : saveStudentList(db)
 activate Storage
-Storage -->> CreateCommand
+Storage --> CreateCommand
 deactivate Storage
-CreateCommand -->> App : commandResult
+
+CreateCommand --> App : commandResult
 deactivate CreateCommand
+
 App -> Ui : show(result.getMessage())
 activate Ui
-Ui -->> User : display confirmation
+Ui --> User : display confirmation
 deactivate Ui
+
 deactivate App
 @enduml

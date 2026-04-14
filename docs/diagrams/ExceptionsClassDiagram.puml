@@ -1,0 +1,29 @@
+@startuml ExceptionsClassDiagram
+
+skinparam classAttributeIconSize 0
+skinparam style strictuml
+
+class RuntimeException <<Java SDK>>
+
+class CommandException extends RuntimeException {
+    +CommandException(message : String)
+}
+
+class ParseException extends RuntimeException {
+    +ParseException(message : String)
+}
+
+class "Command\nimplementors" as CmdImpls
+class Parser
+class ArgumentTokenizer
+class Validator
+class App
+
+CmdImpls       ..> CommandException : throws
+Parser         ..> ParseException   : throws
+ArgumentTokenizer ..> ParseException : throws
+Validator      ..> ParseException   : throws
+App            ..> CommandException : catches
+App            ..> ParseException   : catches
+
+@enduml

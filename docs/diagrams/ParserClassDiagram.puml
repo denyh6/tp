@@ -16,17 +16,34 @@ class Parser {
     -parseSort(String): Command
     -parseFind(String): Command
     -parseUndo(): Command
-    -validateName(String): String
-    -validatePhone(String): String
-    -validateEmail(String): String
-    -validateAddress(String): String
-    -validateModuleCode(String): String
-    -validateGrade(String): Grade
 }
 
 class ArgumentTokenizer {
     +ArgumentTokenizer(String, String...)
     +getValue(String): String
+}
+
+class Validator {
+    +validateName(String): String
+    +validatePhone(String): String
+    +validateEmail(String): String
+    +validateAddress(String): String
+    +validateCourse(String): String
+    +validateModuleCode(String): String
+    +validateGrade(String): Grade
+    +validateCredits(String): Integer
+    +validateModuleFormat(String): String[]
+    +validateIndex(String): int
+}
+
+class Normalizer {
+    +normalizeName(String): String
+    +normalizePhone(String): String
+    +normalizeEmail(String): String
+    +normalizeAddress(String): String
+    +normalizeCourse(String): String
+    +normalizeModuleCode(String): String
+    +normalizeGrade(String): String
 }
 
 interface Command {
@@ -39,7 +56,11 @@ class ParseException {
     +ParseException(String)
 }
 
-Parser --> ArgumentTokenizer : uses
-Parser ..> Command : creates
-Parser ..> ParseException : throws
+Parser "1" --> "1" ArgumentTokenizer : uses
+Parser  ..>  Command : creates
+Parser  ..>  ParseException : throws
+
+Parser "1" --> "0..*" Validator : uses
+Parser "1" --> "0..*" Normalizer : uses
+
 @enduml

@@ -1,0 +1,101 @@
+@startuml ForceCreateCommandSequence
+skinparam style strictuml
+skinparam maxMessageSize 150
+
+actor User
+
+participant ":App" as App
+participant ":Ui" as Ui
+participant "result:CommandResult" as CommandResult
+participant "confirmed:ForceCreateCommand" as ForceCreateCommand
+participant "inner:CreateCommand" as CreateCommand
+participant ":Student.Builder" as Builder
+participant ":Student" as Student
+participant ":StudentDatabase" as StudentDatabase
+participant ":Storage" as Storage
+
+note over App : CreateCommand.execute returned a CommandResult\nwith requiresConfirmation() == true
+
+App -> Ui : show(result.getMessage())
+activate Ui
+Ui --> User : display duplicate warning
+deactivate Ui
+
+App -> Ui : readCommand()
+activate Ui
+Ui --> App : confirmation
+deactivate Ui
+
+alt confirmation.equalsIgnoreCase("y")
+
+    App -> CommandResult : getPendingCommand()
+    activate CommandResult
+    CommandResult --> App : confirmed
+    deactivate CommandResult
+
+    App -> ForceCreateCommand : execute(db, storage)
+    activate ForceCreateCommand
+
+    ForceCreateCommand -> CreateCommand : doCreate(db, storage)
+    activate CreateCommand
+
+    CreateCommand -> Builder ** : new Builder(name)
+    activate Builder
+
+    Builder -> Builder : phone(phone)
+    activate Builder
+    deactivate Builder
+
+    Builder -> Builder : email(email)
+    activate Builder
+    deactivate Builder
+
+    Builder -> Builder : address(address)
+    activate Builder
+    deactivate Builder
+
+    Builder -> Builder : course(course)
+    activate Builder
+    deactivate Builder
+
+    Builder -> Student ** : build()
+    activate Student
+    Student --> Builder : student
+    deactivate Student
+
+    Builder --> CreateCommand : student
+    deactivate Builder
+
+    CreateCommand -> StudentDatabase : addStudent(student)
+    activate StudentDatabase
+    StudentDatabase --> CreateCommand
+    deactivate StudentDatabase
+
+    CreateCommand -> Storage : saveStudentList(db)
+    activate Storage
+    Storage --> CreateCommand
+    deactivate Storage
+
+    CreateCommand --> ForceCreateCommand : finalResult
+    deactivate CreateCommand
+
+    ForceCreateCommand --> App : finalResult
+    deactivate ForceCreateCommand
+
+    App -> Ui : show(finalResult.getMessage())
+    activate Ui
+    Ui --> User : display confirmation
+    deactivate Ui
+
+    App -> App : history.push(confirmed)
+
+else confirmation != "y"
+
+    App -> Ui : show("Creation cancelled.")
+    activate Ui
+    Ui --> User : display cancellation
+    deactivate Ui
+
+end
+
+@enduml

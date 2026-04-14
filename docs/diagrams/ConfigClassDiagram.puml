@@ -2,25 +2,25 @@
 skinparam classAttributeIconSize 0
 skinparam style strictuml
 
-class Config {
-    {static} +CMD_CREATE: String
-    {static} +CMD_LIST: String
-    {static} +CMD_DELETE: String
-    {static} +CMD_ADD: String
-    {static} +CMD_REMOVE: String
-    {static} +CMD_STATUS: String
-    {static} +CMD_UNDO: String
-    {static} +CMD_SEARCH: String
-    {static} +CMD_SORT: String
-    {static} +CMD_EXIT: String
-    {static} +CMD_FIND: String
-    {static} +CMD_EDIT: String
+class Config <<utility>> {
+    {static} +CMD_CREATE : String
+    {static} +CMD_LIST : String
+    {static} +CMD_DELETE : String
+    {static} +CMD_EDIT : String
+    {static} +CMD_STATUS : String
+    {static} +CMD_UNDO : String
+    {static} +CMD_SEARCH : String
+    {static} +CMD_SORT : String
+    {static} +CMD_FIND : String
+    {static} +CMD_EXIT : String
+    {static} +CMD_HELP : String
+    {static} +CMD_ADD : String
+    {static} +CMD_REMOVE : String
     -Config()
 }
 
-class Parser {
-    +parse(String): Command
-}
+class Parser
 
-Parser ..> Config : uses constants
+Parser ..> Config : uses
+
 @enduml

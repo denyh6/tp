@@ -2,47 +2,32 @@
 skinparam classAttributeIconSize 0
 skinparam style strictuml
 
-interface Command {
-    +execute(StudentDatabase): CommandResult
-    +execute(StudentDatabase, Storage): CommandResult
-    +undo(StudentDatabase): CommandResult
-    +undo(StudentDatabase, Storage): CommandResult
-    +isUndoable(): boolean
+
+interface Command <<interface>> {
+    +execute(db : StudentDatabase) : CommandResult
+    +execute(db : StudentDatabase, storage : Storage) : CommandResult
+    +undo(db : StudentDatabase) : CommandResult
+    +undo(db : StudentDatabase, storage : Storage) : CommandResult
+    +isUndoable() : boolean
 }
 
-class CreateCommand {
-    +execute(StudentDatabase, Storage): CommandResult
-    +undo(StudentDatabase, Storage): CommandResult
-    +isUndoable(): boolean
-}
+class CreateCommand      implements Command
+class ForceCreateCommand implements Command
+class DeleteCommand      implements Command
+class EditCommand        implements Command
+class ListCommand        implements Command
+class FindCommand        implements Command
+class SearchCommand      implements Command
+class SortCommand        implements Command
+class StatusCommand      implements Command
+class HelpCommand        implements Command
+class ExitCommand        implements Command
+class UndoCommand        implements Command
+class AddCommand         implements Command
+class RemoveCommand      implements Command
 
-class DeleteCommand {
-    +execute(StudentDatabase, Storage): CommandResult
-    +undo(StudentDatabase, Storage): CommandResult
-    +isUndoable(): boolean
-}
+note "AddCommand and RemoveCommand\nreside in dextro.command.module" as N1
+AddCommand .. N1
+RemoveCommand .. N1
 
-class ListCommand {
-    +execute(StudentDatabase, Storage): CommandResult
-    +undo(StudentDatabase, Storage): CommandResult
-    +isUndoable(): boolean
-}
-
-class AddCommand {
-    +execute(StudentDatabase, Storage): CommandResult
-    +undo(StudentDatabase, Storage): CommandResult
-    +isUndoable(): boolean
-}
-
-class RemoveCommand {
-    +execute(StudentDatabase, Storage): CommandResult
-    +undo(StudentDatabase, Storage): CommandResult
-    +isUndoable(): boolean
-}
-
-Command <|.. CreateCommand
-Command <|.. DeleteCommand
-Command <|.. ListCommand
-Command <|.. AddCommand
-Command <|.. RemoveCommand
 @enduml

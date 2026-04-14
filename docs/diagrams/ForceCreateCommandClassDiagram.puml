@@ -1,8 +1,16 @@
-@startuml CreateCommandClassDiagram
+@startuml ForceCreateCommandClassDiagram
 skinparam classAttributeIconSize 0
 skinparam style strictuml
 
 interface Command <<interface>> {
+    +execute(db : StudentDatabase, storage : Storage) : CommandResult
+    +undo(db : StudentDatabase, storage : Storage) : CommandResult
+    +isUndoable() : boolean
+}
+
+class ForceCreateCommand implements Command {
+    -inner : CreateCommand
+    +ForceCreateCommand(name : String, phone : String, email : String, address : String, course : String)
     +execute(db : StudentDatabase, storage : Storage) : CommandResult
     +undo(db : StudentDatabase, storage : Storage) : CommandResult
     +isUndoable() : boolean
@@ -22,19 +30,10 @@ class CreateCommand implements Command {
     +isUndoable() : boolean
 }
 
-class ForceCreateCommand implements Command {
-    -inner : CreateCommand
-    +ForceCreateCommand(name : String, phone : String, email : String, address : String, course : String)
-    +execute(db : StudentDatabase, storage : Storage) : CommandResult
-    +isUndoable() : boolean
-}
-
 class StudentDatabase {
     +addStudent(student : Student) : void
     +removeStudent(index : int) : Student
     +getStudentCount() : int
-    +getAllStudents() : List<Student>
-    +findDuplicateFields(name : String, phone : String, email : String, address : String) : Map<Student, List<String>>
 }
 
 class Storage {
@@ -62,21 +61,18 @@ class CommandResult {
     +shouldExit() : boolean
 }
 
-class CommandException {
-    +CommandException(message : String)
-}
+' ForceCreateCommand creates its own inner CreateCommand
+ForceCreateCommand ..> CreateCommand : <<create>>
 
-' Dependencies
-CreateCommand ..> Storage
+' ForceCreateCommand delegates to inner — shown via the association
+ForceCreateCommand "1" --> "1" CreateCommand : inner
+
+' CreateCommand's dependencies (called via delegation)
 CreateCommand ..> StudentDatabase
-CreateCommand ..> CommandException : <<throws>>
+CreateCommand ..> Storage
 CreateCommand ..> StudentBuilder : <<create>>
 CreateCommand ..> CommandResult : <<create>>
-CreateCommand ..> ForceCreateCommand : <<create>>
 
 StudentBuilder ..> Student : <<create>>
-
-' Associations
-ForceCreateCommand "1" --> "1" CreateCommand : inner
 
 @enduml

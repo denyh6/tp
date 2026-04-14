@@ -73,7 +73,7 @@ enum Grade {
 }
 
 StudentDatabase "1" o-- "*" Student : contains
-Student "1" o-- "*" Module : has
+Student "1" *-- "*" Module : has
 Module --> Grade : uses
 Builder ..> Student : builds
 Student +-- Builder
