@@ -81,8 +81,7 @@ public class SearchCommand implements Command {
     // ========================================================================
     // Private Helper Methods
     // ========================================================================
-
-
+    
     //Evaluates if a student matches all the provided search criteria.
     private boolean isStudentMatch(Student student) {
         if (!isMatch(student.getName(), this.name)) {
@@ -112,6 +111,7 @@ public class SearchCommand implements Command {
      * Checks if a student's field matches the search query string.
      * If the query is null, it means the user isn't searching by this field, so it auto-passes.
      */
+
     private boolean isMatch(String studentField, String query) {
         if (query == null) {
             return true;
@@ -156,6 +156,7 @@ public class SearchCommand implements Command {
      * Retrieves a formatted string of matching modules (e.g., "CS2113: A | CS2040: B+"),
      * or null if no modules match the search query.
      */
+
     private String getMatchingModulesString(Student student) {
         StringBuilder mods = new StringBuilder();
         boolean hasMatch = false;
