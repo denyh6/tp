@@ -561,20 +561,12 @@ the given substring)
 - The command retrieves relevant student records from the `StudentDatabase` based on the specified search criteria
 - A `CommandResult` is returned containing the search results based on the specified search criteria
 
-#### Storage
+#### Storage (As mentioned above)
 
 Storage manages saving changes to the StudentDatabase through the use of the DextroStudentList.txt file.
 The StudentDatabase is saved whenever the list is altered in any way. If the program is run again, it will
 automatically load the saved task in the txt file, extracting from text to a StudentDatabase.
 
-##### Class Diagram
-
-![StorageClassDiagram](images/StorageClassDiagram.png)
-The class diagram shows the relationship between `Storage` and other components:
-- `Storage` references `StudentDatabase` to retrieve relevant student records when saving the StudentDatabase 
-in the txt file via toString(), dependent on the user command (if the StudentDatabase is altered).
-- `Storage` interacts with `Student` to create each student parsed from the txt file.
-- `Storage` also adds each module and grade associated with the created student previously saved in the txt file.
 
 ## Product scope
 ### Target user profile

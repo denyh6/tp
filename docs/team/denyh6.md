@@ -46,6 +46,7 @@ Given below are my contributions to the project.
         * Added implementation details of the `Storage` and `Search with phone number` feature.
         * Generated the Class diagrams and sequence diagrams for these features using plantuml.
         * Added non-functional requirements
+        * Added Instructions for manual testing
     * team-based tasks:
         * Setting up the GitHub team org/repo as a team
         * Tutorial activities
